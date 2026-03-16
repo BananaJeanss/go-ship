@@ -5,6 +5,7 @@
   --background-color: #f2fdff;
   --accent-color: #1b2a41;
   --text-color: #0c1821;
+  --backup-color: #427cfa; /* cause i needed something stronger */
 }
 
 body {
@@ -51,6 +52,22 @@ header {
   height: 100%;
 }
 
+.hero-stuff-main-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: start;
+  margin: 115px 0 0 50px;
+}
+
+.hero-taglines {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: start;
+  margin-left: 20px;
+}
+
 .logo {
   width: auto;
   height: 200px;
@@ -59,7 +76,7 @@ header {
 }
 
 .logo:hover {
-    transform: rotate(10deg);
+  transform: rotate(10deg);
 }
 
 .hero-tagline {
@@ -82,9 +99,69 @@ header {
   text-shadow: 2px 2px 0px var(--main-color);
 }
 
+button {
+  font-family: "Bagel Fat One", cursive;
+  font-style: italic;
+}
+
+.regbutton {
+  background-color: var(--main-color);
+  color: var(--background-color);
+  border: none;
+  padding: 10px 20px;
+  font-size: 18px;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease-in-out,
+    color 0.15s ease-in-out;
+  border-radius: 50px;
+  border: 2px solid var(--accent-color);
+}
+
+.pulseeffect {
+  animation: pulse 2s infinite;
+}
+
+.tyforrsvp {
+  font-size: xx-large;
+  filter: drop-shadow(-2px -2px 0px var(--backup-color))
+    drop-shadow(2px 2px 0px var(--main-color));
+  margin: 0;
+}
+
+.regbutton:hover {
+  background-color: var(--backup-color);
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 footer {
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 20px 0;
+}
+
+/* i hate responsive design why cant i just use react and tailwind waa waa waa */
+
+@media (max-width: 768px) {
+  .logo {
+    height: 25vw;
+  }
+
+  .hero-stuff-main-content {
+    margin: 125px 0 0 0px;
+    width: 100%;
+    align-items: center;
+  }
 }

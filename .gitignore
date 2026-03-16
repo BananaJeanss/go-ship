@@ -1,2 +1,9 @@
 # builds
 dist/
+
+# env
+.env*
+!.env.example
+
+# sqlite3
+*.db

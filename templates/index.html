@@ -9,27 +9,25 @@
   <body>
     <header>
       <img src="public/hero.png" alt="Go Ship!" class="hero-image" />
+      <a href="https://hackclub.com/"
+        ><img
+          style="
+            position: absolute;
+            top: 15px;
+            left: 0;
+            border: 0;
+            width: 256px;
+            z-index: 999;
+          "
+          src="/public/2026.svg"
+          alt="Hack Club"
+      /></a>
+
       <div class="hero-stuff">
         <div class="hero-stuff-main">
-          <div
-            style="
-              display: flex;
-              flex-direction: column;
-              justify-content: start;
-              align-items: start;
-              margin: 50px 0 0 50px;
-            "
-          >
+          <div class="hero-stuff-main-content">
             <img src="public/GoShip.png" alt="Go Ship!" class="logo" />
-            <div
-              style="
-                display: flex;
-                flex-direction: column;
-                justify-content: start;
-                align-items: start;
-                margin-left: 20px;
-              "
-            >
+            <div class="hero-taglines">
               <span class="hero-tagline">
                 <img src="public/sailboat.svg" alt="Sailboat" />
                 <p class="hero-tagline-text sick-ass-drop-shadow-solid">
@@ -44,6 +42,28 @@
                 </p>
               </span>
             </div>
+            <!-- buttons nd stuff -->
+            <hr
+              style="border: 0; border-top: 1px solid currentColor; width: 100%"
+            />
+            {{if not .IsAuthed}}
+            <a href="{{ .HCAAuthURL }}">
+              <button class="regbutton rsvp-button">RSVP Now!</button>
+            </a>
+            {{else}}
+            <p class="tyforrsvp">Thanks for RSVPing!</p>
+            {{end}}
+            <div style="width: 100%; display: flex; flex-direction: row; justify-content: start; align-items: start;">
+              <hr
+                style="
+                  border: 0;
+                  border-top: 1px solid currentColor;
+                  width: 25%;
+                  margin: 15px 0;
+                "
+              />
+            </div>
+            <p>RSVP Count: {{ .RSVPCount }}</p>
           </div>
         </div>
       </div>
