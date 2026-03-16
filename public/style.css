@@ -1,0 +1,90 @@
+@import url("https://fonts.googleapis.com/css2?family=Bagel+Fat+One&display=swap");
+
+:root {
+  --main-color: #65a9d7; /* Go logo blue */
+  --background-color: #f2fdff;
+  --accent-color: #1b2a41;
+  --text-color: #0c1821;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  padding: 0;
+  margin: 0;
+  font-family: "Bagel Fat One", cursive;
+  color: var(--text-color);
+}
+
+header {
+  background-color: var(--main-color);
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center bottom;
+  display: block; /* removes inline spacing gap */
+}
+
+.hero-stuff {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-stuff-main {
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  width: 100%;
+  height: 100%;
+}
+
+.logo {
+  width: auto;
+  height: 200px;
+  filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.5));
+  transition: transform 0.15s ease-in-out;
+}
+
+.logo:hover {
+    transform: rotate(10deg);
+}
+
+.hero-tagline {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.hero-tagline-text {
+  margin: 0;
+  margin-bottom: 4px;
+  font-size: 32px;
+  color: #000;
+}
+
+.sick-ass-drop-shadow-solid {
+  filter: drop-shadow(2px 2px 0px var(--main-color));
+  text-shadow: 2px 2px 0px var(--main-color);
+}
+
+footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+}

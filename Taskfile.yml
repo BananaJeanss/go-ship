@@ -1,0 +1,12 @@
+version: "3"
+tasks:
+  build:
+    desc: Builds the project for Windows
+    cmds:
+      - go build -o dist/go-ship.exe .
+    silent: true
+  default:
+    desc: Runs the build task
+    cmds:
+      - task build
+    silent: true
