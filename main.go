@@ -54,9 +54,15 @@ func dynamicHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, nil)
 }
 
+var Port = "3000"
+
 func init() {
 	// env vars
 	godotenv.Load()
+	Port = os.Getenv("PORT")
+	if Port == "" {
+		Port = "3000"
+	}
 
 	// handle ctrl+c gracefully to not get an error
 	c := make(chan os.Signal, 1)
@@ -93,8 +99,8 @@ func main() {
 	http.HandleFunc("/", dynamicHandler)
 
 	// listen and serve
-	fmt.Printf("Listening & Serving on http://localhost:3000\n")
-	if err := http.ListenAndServe(":3000", nil); err != nil {
+	fmt.Printf("Listening & Serving on http://localhost:%s\n", Port)
+	if err := http.ListenAndServe(":" + Port, nil); err != nil {
 		fmt.Printf("Server failed: %v\n", err)
 	}
 }
