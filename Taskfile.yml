@@ -10,6 +10,11 @@ tasks:
     cmds:
       - go run ./main.go
     silent: true
+  test:
+    desc: test the tests that test the project
+    cmds:
+      - go test -v ./tests
+    silent: true
   default:
     desc: Runs the build task
     cmds:

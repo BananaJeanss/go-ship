@@ -14,7 +14,7 @@
   overflow: auto;
   width: 20vw;
   height: 20vh;
-  background: hsl(200 10% 97%);
+  background: var(--background-color);
   padding: 1rem;
   border-radius: 0.5rem;
 }
@@ -176,6 +176,17 @@ a:hover {
   text-shadow: 1px 1px 1px var(--accent-color);
 }
 
+.wave-seperator {
+  width: 100%;
+  height: auto;
+  padding: 0;
+  display: block;
+}
+
+.flipy {
+  transform: rotate(180deg)
+}
+
 button {
   font-family: "Bagel Fat One", cursive;
   letter-spacing: 1px;
@@ -235,6 +246,34 @@ button {
   text-underline-offset: 4px;
 }
 
+.faq-section {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: start;
+  .faq-leftside,
+  .faq-rightside {
+    background-color: var(--background-color);
+    width: 50%;
+    padding: 100px 50px;
+    padding-top: 0;
+  }
+  h1 {
+    --n: 5;
+    --dacolor: black;
+    color: var(--background-color);
+    text-shadow:
+      calc(var(--n) * 1px) 0 0 var(--dacolor),
+      calc(var(--n) * -1px) 0 0 var(--dacolor),
+      0 calc(var(--n) * 1px) 0 var(--dacolor),
+      0 calc(var(--n) * -1px) 0 var(--dacolor),
+      calc(var(--n) * 1px) calc(var(--n) * 1px) 0 var(--dacolor),
+      calc(var(--n) * -1px) calc(var(--n) * 1px) 0 var(--dacolor),
+      calc(var(--n) * 1px) calc(var(--n) * -1px) 0 var(--dacolor),
+      calc(var(--n) * -1px) calc(var(--n) * -1px) 0 var(--dacolor);
+  }
+}
+
 .hrseperator {
   border: none;
   border-top: 4px dotted var(--background-color);
@@ -262,12 +301,28 @@ button {
 }
 
 footer {
+  background-color: #4c6cfe;
+  color: var(--background-color);
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 20px 0;
+  margin: 0 0 0 0;
+  padding: 25px;
   p {
     margin: 0;
+  }
+  a {
+    color: var(--background-color);
+    text-decoration: underline var(--background-color);
+  }
+  a:hover {
+    text-decoration-color: var(--background-color);
+    text-decoration: wavy underline var(--background-color);
+  }
+  .verticalseperatorthingy {
+    border: none;
+    border-left: 4px dotted var(--background-color);
+    height: 24px;
   }
 }
 
