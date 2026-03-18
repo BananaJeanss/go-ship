@@ -9,7 +9,10 @@ type PageData struct {
 	HCAAuthURL string
 	IsAuthed   bool
 	RSVPCount  int
+	CommitHash string
 }
+
+var commitHash = "dev"
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles("./templates/index.html")
@@ -36,6 +39,12 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		HCAAuthURL: "https://auth.hackclub.com/oauth/authorize?client_id=" + clientId + "&redirect_uri=" + redirectURI + "&response_type=code&scope=openid+profile+email+name+profile+slack_id+verification_status&prompt=consent",
 		IsAuthed:   loggedIn,
 		RSVPCount: rsvpCount,
+		CommitHash: func() string {
+			if len(commitHash) > 7 {
+				return commitHash[:7] // shorten to short hash if > 7 length
+			}
+			return commitHash
+		}(),
 	}
 
 	tmpl.Execute(w, data)

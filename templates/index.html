@@ -27,47 +27,85 @@
         <div class="hero-stuff-main">
           <div class="hero-stuff-main-content">
             <img src="public/GoShip.png" alt="Go Ship!" class="logo" />
-            <div class="hero-taglines">
-              <span class="hero-tagline">
-                <img src="public/sailboat.svg" alt="Sailboat" />
-                <p class="hero-tagline-text sick-ass-drop-shadow-solid">
-                  Ship a Golang project
-                </p>
-              </span>
-              <img src="public/arrow-down.svg" alt="arrow down" />
-              <span class="hero-tagline">
-                <img src="public/gem.svg" alt="Gem" />
-                <p class="hero-tagline-text sick-ass-drop-shadow-solid">
-                  Win cool prizes!
-                </p>
-              </span>
+            <div class="hero-taglines-parent">
+              <img src="public/frame.png" alt="Frame" class="tagline-frame" />
+              <div class="hero-taglines-parent-parent">
+                <div class="hero-taglines">
+                  <span class="hero-tagline">
+                    <img
+                      src="public/sailboat.svg"
+                      alt="Sailboat"
+                      class="lucide-react-icon"
+                    />
+                    <p class="hero-tagline-text sick-ass-drop-shadow-solid">
+                      Ship a Golang project
+                    </p>
+                  </span>
+                  <img
+                    src="public/coolerdotted.png"
+                    alt="arrow down"
+                    class="dotted-arrow"
+                  />
+                  <span class="hero-tagline">
+                    <img
+                      src="public/gem.svg"
+                      alt="Gem"
+                      class="lucide-react-icon"
+                    />
+                    <p class="hero-tagline-text sick-ass-drop-shadow-solid">
+                      Win cool prizes!
+                    </p>
+                  </span>
+                </div>
+                <hr class="hrseperator" />
+                {{if not .IsAuthed}}
+                <a href="{{ .HCAAuthURL }}">
+                  <button class="regbutton rsvp-button">RSVP Now!</button>
+                </a>
+                {{else}}
+                <p class="tyforrsvp">Thanks for RSVPing!</p>
+                {{end}}
+                <div
+                  style="
+                    width: 100%;
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: start;
+                    align-items: start;
+                  "
+                ></div>
+              </div>
             </div>
             <!-- buttons nd stuff -->
-            <hr
-              style="border: 0; border-top: 1px solid currentColor; width: 100%"
-            />
-            {{if not .IsAuthed}}
-            <a href="{{ .HCAAuthURL }}">
-              <button class="regbutton rsvp-button">RSVP Now!</button>
-            </a>
-            {{else}}
-            <p class="tyforrsvp">Thanks for RSVPing!</p>
-            {{end}}
-            <div style="width: 100%; display: flex; flex-direction: row; justify-content: start; align-items: start;">
-              <hr
-                style="
-                  border: 0;
-                  border-top: 1px solid currentColor;
-                  width: 25%;
-                  margin: 15px 0;
-                "
-              />
-            </div>
-            <p>RSVP Count: {{ .RSVPCount }}</p>
           </div>
         </div>
       </div>
     </header>
-    <footer>:3</footer>
+    <footer>
+      <p>
+        <a href="https://hackclub.com" target="_blank"> Hack Club </a>
+      </p>
+      <div class="verticalseperatorthingy"></div>
+      <p>
+        <a href="https://github.com/bananajeanss/go-ship" target="_blank">
+          Github Repo
+        </a>
+      </p>
+      <div class="verticalseperatorthingy"></div>
+      <p>
+        Commit:
+        <a
+          id="ghCommitUrl"
+          href="https://github.com/bananajeanss/go-ship/commit/{{ .CommitHash }}"
+          target="_blank"
+        >
+          {{ .CommitHash }}
+        </a>
+      </p>
+      <div class="verticalseperatorthingy"></div>
+      <p style="display: flex; flex-direction: row; align-items: center; gap: 5px">
+        Built on <a href="https://go.dev/" target="_blank">Go</a> <img src="/public/gopherdraw.png" alt="an masterpiece drawing of the go gopher at like what 42x42 pixels" class="gopherdraw" />
+      </p>
+    </footer>
   </body>
 </html>

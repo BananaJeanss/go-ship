@@ -3,7 +3,12 @@ tasks:
   build:
     desc: Builds the project for Windows
     cmds:
-      - go build -o dist/go-ship.exe .
+      - go build -ldflags "-X main.commitHash=`git rev-parse --short HEAD`" -o dist/go-ship.exe .
+    silent: true
+  run:
+    desc: Build & run the project
+    cmds:
+      - go run ./main.go
     silent: true
   default:
     desc: Runs the build task

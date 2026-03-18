@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Bagel+Fat+One&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap");
 
 :root {
   --main-color: #65a9d7; /* Go logo blue */
@@ -6,6 +7,34 @@
   --accent-color: #1b2a41;
   --text-color: #0c1821;
   --backup-color: #427cfa; /* cause i needed something stronger */
+}
+
+/* i hate css, still */
+.scoll-pane {
+  overflow: auto;
+  width: 20vw;
+  height: 20vh;
+  background: hsl(200 10% 97%);
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+::-webkit-scrollbar {
+  width: 12px; /* Mostly for vertical scrollbars */
+  height: 12px; /* Mostly for horizontal scrollbars */
+}
+::-webkit-scrollbar-thumb {
+  /* Foreground */
+  background: var(--scrollbar-foreground);
+  background: black;
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-track {
+  /* Background */
+  background: var(--scrollbar-background);
+  background: transparent;
 }
 
 body {
@@ -24,6 +53,16 @@ header {
   display: flex;
   position: relative;
   overflow: hidden;
+}
+
+a {
+  color: var(--backup-color);
+  text-decoration: underline var(--backup-color);
+}
+
+a:hover {
+  text-decoration-color: var(--main-color);
+  text-decoration: wavy underline var(--main-color);
 }
 
 .hero-image {
@@ -60,12 +99,39 @@ header {
   margin: 115px 0 0 50px;
 }
 
+.hero-taglines-parent {
+  position: absolute;
+  top: 32%;
+}
+
+.hero-taglines-parent-parent {
+  position: relative;
+  z-index: 1;
+  padding-top: 80px;
+  padding-left: 40px;
+  padding-right: 40px;
+  width: 600px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
 .hero-taglines {
   display: flex;
   flex-direction: column;
-  justify-content: start;
-  align-items: start;
-  margin-left: 20px;
+  justify-content: center;
+  align-items: center;
+}
+
+.tagline-frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 600px;
+  height: auto;
+  z-index: -1;
 }
 
 .logo {
@@ -91,31 +157,66 @@ header {
   margin: 0;
   margin-bottom: 4px;
   font-size: 32px;
-  color: #000;
+  color: var(--background-color);
+}
+
+.lucide-react-icon {
+  color: white;
+  filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(100deg)
+    brightness(102%) contrast(102%);
+}
+
+.dotted-arrow {
+  width: auto;
+  height: 125px;
 }
 
 .sick-ass-drop-shadow-solid {
-  filter: drop-shadow(2px 2px 0px var(--main-color));
-  text-shadow: 2px 2px 0px var(--main-color);
+  filter: drop-shadow(1px 1px 1px var(--accent-color));
+  text-shadow: 1px 1px 1px var(--accent-color);
 }
 
 button {
   font-family: "Bagel Fat One", cursive;
-  font-style: italic;
+  letter-spacing: 1px;
+  font-weight: bolder;
+  font-style: oblique;
+}
+
+@keyframes gradientshift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .regbutton {
-  background-color: var(--main-color);
+  background: linear-gradient(
+    -67deg,
+    var(--main-color) 0%,
+    var(--backup-color) 50%,
+    var(--main-color) 100%
+  );
+  background-size: 200% 200%;
+  background-position: 0% 50%;
+  transition: background-position 0.3s ease-in-out;
   color: var(--background-color);
   border: none;
   padding: 10px 20px;
+  margin: 10px 0;
   font-size: 18px;
   cursor: pointer;
-  transition:
-    background-color 0.15s ease-in-out,
-    color 0.15s ease-in-out;
   border-radius: 50px;
-  border: 2px solid var(--accent-color);
+  border: 4px solid white;
+}
+
+.regbutton:hover {
+  background-position: 100% 50%;
 }
 
 .pulseeffect {
@@ -124,13 +225,28 @@ button {
 
 .tyforrsvp {
   font-size: xx-large;
-  filter: drop-shadow(-2px -2px 0px var(--backup-color))
-    drop-shadow(2px 2px 0px var(--main-color));
+  color: var(--background-color);
+  margin: 0;
+  filter: drop-shadow(1px 1px 0px var(--main-color));
+  display: flex;
+  align-items: start;
+  text-decoration: var(--main-color) wavy underline;
+  text-underline-position: under;
+  text-underline-offset: 4px;
+}
+
+.hrseperator {
+  border: none;
+  border-top: 4px dotted var(--background-color);
+  width: 75%;
   margin: 0;
 }
 
-.regbutton:hover {
-  background-color: var(--backup-color);
+.verticalseperatorthingy {
+  border: none;
+  border-left: 4px dotted black;
+  height: 24px;
+  margin: 0 10px;
 }
 
 @keyframes pulse {
@@ -150,6 +266,9 @@ footer {
   justify-content: center;
   align-items: center;
   margin: 20px 0;
+  p {
+    margin: 0;
+  }
 }
 
 /* i hate responsive design why cant i just use react and tailwind waa waa waa */
@@ -163,5 +282,15 @@ footer {
     margin: 125px 0 0 0px;
     width: 100%;
     align-items: center;
+  }
+
+  /* footer */
+  footer {
+    flex-direction: column;
+    gap: 10px;
+    .verticalseperatorthingy {
+      transform: rotate(90deg); /* revolutionary stuff */
+      margin: 0 0;
+    }
   }
 }
