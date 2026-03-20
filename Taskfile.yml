@@ -1,9 +1,9 @@
 version: "3"
 tasks:
   build:
-    desc: Builds the project for Windows
+    desc: Builds the project
     cmds:
-      - go build -ldflags "-X main.commitHash=`git rev-parse --short HEAD`" -o dist/go-ship.exe .
+      - go build -ldflags "-X main.commitHash=`git rev-parse --short HEAD`" -o dist/ .
     silent: true
   run:
     desc: Build & run the project
