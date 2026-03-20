@@ -27,7 +27,7 @@ func AuthCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	response, err := http.PostForm("https://auth.hackclub.com/oauth/token", url.Values{
 		"client_id":     {os.Getenv("HCA_CLIENT_ID")},
 		"client_secret": {os.Getenv("HCA_CLIENT_SECRET")},
-		"redirect_uri":  {os.Getenv("HCA_REDIRECT_URI")},
+		"redirect_uri":  {os.Getenv("BASE_URL") + "/auth/callback"},
 		"code":          {code},
 		"grant_type":    {"authorization_code"},
 	})

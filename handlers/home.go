@@ -22,7 +22,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	clientId := os.Getenv("HCA_CLIENT_ID")
-	redirectURI := os.Getenv("HCA_REDIRECT_URI")
+	redirectURI := os.Getenv("BASE_URL") + "/auth/callback"
 
 	loggedIn := false
 	cookie, err := r.Cookie("goship_session")
