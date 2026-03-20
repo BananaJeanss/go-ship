@@ -398,4 +398,14 @@ footer {
       margin: 0 0;
     }
   }
+
+  /* faq section */
+  .faq-section {
+    flex-direction: column;
+    .faq-leftside,
+    .faq-rightside {
+      width: 100wv;
+      padding: 50px;
+    }
+  }
 }
