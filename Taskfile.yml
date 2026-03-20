@@ -3,7 +3,7 @@ tasks:
   build:
     desc: Builds the project
     cmds:
-      - go build -ldflags "-X main.commitHash=`git rev-parse --short HEAD`" -o dist/ .
+      - go build -ldflags "-X bananajeanss/go-ship/handlers.commitHash=$(git rev-parse --short HEAD)" -o dist/ .
     silent: true
   run:
     desc: Build & run the project
