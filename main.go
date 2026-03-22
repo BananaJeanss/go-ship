@@ -1,15 +1,19 @@
 package main
 
-import "fmt"
-import "net/http"
-import "html/template"
-import "os"
-import "os/signal"
-import "path/filepath"
-import "strings"
-import "github.com/joho/godotenv"
-import "bananajeanss/go-ship/handlers"
-import "bananajeanss/go-ship/db"
+import (
+	"bananajeanss/go-ship/StartTime"
+	"bananajeanss/go-ship/db"
+	"bananajeanss/go-ship/handlers"
+	"fmt"
+	"html/template"
+	"net/http"
+	"os"
+	"os/signal"
+	"path/filepath"
+	"strings"
+
+	"github.com/joho/godotenv"
+)
 
 func notFoundHandler(w http.ResponseWriter) {
 	tmpl, err := template.ParseFiles("./templates/404.html")
@@ -57,6 +61,9 @@ func dynamicHandler(w http.ResponseWriter, r *http.Request) {
 var Port = "3000"
 
 func init() {
+	// set start time
+	StartTime.SetStartTime()
+
 	// env vars
 	godotenv.Load()
 	Port = os.Getenv("PORT")
@@ -94,6 +101,7 @@ func main() {
 
 	// specific handlers
 	http.HandleFunc("/auth/callback", handlers.AuthCallbackHandler)
+	http.HandleFunc("/stats", handlers.StatsHandler)
 
 	// catch-all
 	http.HandleFunc("/", dynamicHandler)
