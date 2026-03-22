@@ -55,6 +55,24 @@ header {
   overflow: hidden;
 }
 
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+#scrolly-down-arrow-thing {
+  position: absolute;
+  top: 85vh;
+  right: 0;
+  animation: bounce 1s infinite;
+  transition: opacity 0.75s ease-in-out;
+}
+
 a {
   color: var(--backup-color);
   text-decoration: underline var(--backup-color);
@@ -184,7 +202,7 @@ a:hover {
 }
 
 .flipy {
-  transform: rotate(180deg)
+  transform: rotate(180deg);
 }
 
 button {
@@ -311,14 +329,73 @@ details summary {
   font-weight: bold;
 }
 
-details p a, details ul li a {
+details p a,
+details ul li a {
   color: var(--background-color);
   text-decoration: underline var(--background-color);
 }
 
-details p a:hover, details ul li a:hover {
+details p a:hover,
+details ul li a:hover {
   text-decoration-color: var(--background-color);
   text-decoration: wavy underline var(--background-color);
+}
+
+.guides-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  h2 {
+    font-size: 2.5rem;
+    font-style: italic;
+    margin: 0;
+  }
+}
+
+.guides-hr {
+  border: none;
+  border-top: 4px dotted var(--main-color);
+  width: 75%;
+  margin: 0;
+}
+
+.guides-cards-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+}
+
+.guide-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--main-color);
+  padding: 20px;
+  border-radius: 12px;
+  border: 3px solid var(--accent-color);
+  color: black;
+
+  h3, p {
+    margin: 0;
+  }
+  p {
+    font-family: "Lexend Deca", sans-serif;
+  }
+}
+
+.guides-next-arrow {
+  width: auto;
+  height: 50px;
+  transform: rotate(-90deg);
+}
+
+.guide-card-image {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
 }
 
 .hrseperator {
@@ -346,7 +423,6 @@ details p a:hover, details ul li a:hover {
     transform: scale(1);
   }
 }
-
 
 footer {
   border-top: 4px dotted var(--main-color);
@@ -376,9 +452,102 @@ footer {
   }
 }
 
+/* carousel */
+
+.carousel-section {
+  overflow-x: hidden;
+  padding: 40px 0;
+  background-color: var(--background-color);
+}
+
+.carousel-title {
+  font-size: 2.5rem;
+  font-style: italic;
+  text-align: left;
+  padding-left: 50px;
+  margin: 0 0 24px;
+  color: var(--text-color);
+  padding-bottom: 8px;
+}
+
+.carousel-track-container {
+  overflow-x: hidden;
+  padding: 20px 0;
+  width: 100%;
+}
+
+@keyframes carousel-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.carousel-track {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+  width: max-content;
+  animation: carousel-scroll 18s linear infinite;
+}
+
+.carousel-card {
+  width: clamp(160px, 40vw, 260px);
+  flex-shrink: 0;
+  box-sizing: border-box;
+  padding: clamp(12px, 2vw, 24px);
+  background: white;
+  border-radius: 12px;
+  border: 3px solid var(--main-color);
+  overflow: visible;
+}
+
+.carousel-card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.carousel-card-image {
+  width: clamp(80px, 20vw, 140px);
+  height: clamp(80px, 20vw, 140px);
+  object-fit: contain;
+}
+
+.carousel-card-info {
+  text-align: center;
+}
+
+.carousel-card-title {
+  margin: 0 0 6px;
+  font-size: clamp(0.9rem, 2vw, 1.3rem);
+}
+
+.carousel-card-description {
+  font-family: "Lexend Deca", sans-serif;
+  margin: 0 0 6px;
+  font-size: clamp(0.75rem, 1.5vw, 0.9rem);
+}
+
+.carousel-card-tokens {
+  font-family: "Lexend Deca", sans-serif;
+  color: var(--backup-color);
+  font-weight: bold;
+  margin: 0;
+  font-size: clamp(0.75rem, 1.5vw, 1rem);
+}
+
 /* i hate responsive design why cant i just use react and tailwind waa waa waa */
 
 @media (max-width: 768px) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
   .logo {
     height: 25vw;
   }
@@ -402,10 +571,27 @@ footer {
   /* faq section */
   .faq-section {
     flex-direction: column;
+    align-items: center;
+    padding: 50px 0px;
     .faq-leftside,
     .faq-rightside {
-      width: 100wv;
-      padding: 50px;
+      width: 75vw;
+      padding: 0;
     }
+  }
+
+  /* carousel */
+  .carousel-title {
+    text-align: center;
+    padding-left: 0;
+  }
+
+  /* guides section */
+  .guides-next-arrow {
+    transform: rotate(0deg);
+  }
+
+  .guides-cards-container {
+    flex-direction: column;
   }
 }

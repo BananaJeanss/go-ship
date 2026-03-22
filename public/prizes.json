@@ -1,0 +1,58 @@
+[
+  {
+    "id": "stickers",
+    "name": "Sticker Sheet",
+    "description": "A sheet of Go Ship stickers",
+    "tokens": 1,
+    "image": "/public/android-chrome-512x512.png"
+  },
+  {
+    "id": "servergrant",
+    "name": "Server Hosting Credits ($5)",
+    "description": "Host your project on the cloud!",
+    "tokens": 1,
+    "image": "/public/carousel/hetzner.png"
+  },
+  {
+    "id": "domaingrant",
+    "name": "Domain Name Grant ($10)",
+    "description": "That domain isn't gonna name itself!",
+    "tokens": 2,
+    "image": "/public/carousel/namecheap.webp"
+  },
+  {
+    "id": "gofish",
+    "name": "Golang themed Card Deck",
+    "description": "After you Go Ship, you can Go Fish!",
+    "tokens": 3,
+    "image": "/public/carousel/cards.png"
+  },
+  {
+    "id": "rpi2w",
+    "name": "Raspberry Pi Zero 2 W",
+    "description": "A compact single-board computer",
+    "tokens": 3,
+    "image": "/public/carousel/rpi2w.png"
+  },
+  {
+    "id": "tshirt",
+    "name": "Go Ship T-Shirt",
+    "description": "The fit goes hard (image is not the actual shirt)",
+    "tokens": 4,
+    "image": "/public/carousel/shirt.png"
+  },
+  {
+    "id": "plushie",
+    "name": "Gopher Plushie",
+    "description": "The iconic Go Gopher, cooler than the Blahaj",
+    "tokens": 5,
+    "image": "/public/carousel/gopher.png"
+  },
+  {
+    "id": "programmingbook",
+    "name": "Programming Book Grant ($35)",
+    "description": "A grant towards purchasing a physical programming book",
+    "tokens": 7,
+    "image": "/public/carousel/gobook.jpg"
+  }
+]

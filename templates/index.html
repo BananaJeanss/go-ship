@@ -7,13 +7,32 @@
     <link rel="stylesheet" href="public/style.css" />
     <!-- opengraph stuff -->
     <meta property="og:title" content="Go Ship!" />
-    <meta property="og:description" content="Ship a Go projects -> get cool prizes!" />
+    <meta
+      property="og:description"
+      content="Ship a Go projects -> get cool prizes!"
+    />
     <meta property="og:image" content="/public/hero.png" />
     <meta property="og:url" content="https://goship.hackclub.com/" />
   </head>
   <body>
     <header>
       <img src="/public/hero.png" alt="Go Ship!" class="hero-image" />
+      <img
+        src="/public/godown.png"
+        alt="Scroll down arrow"
+        id="scrolly-down-arrow-thing"
+      />
+      <script>
+        // if scroll 10px> hide the arrow, else show it
+        const arrow = document.getElementById("scrolly-down-arrow-thing");
+        window.addEventListener("scroll", () => {
+          if (window.scrollY > 50) {
+            arrow.style.opacity = "0";
+            window.removeEventListener("scroll", arguments.callee);
+            // cause 1-shot
+          }
+        });
+      </script>
       <a href="https://hackclub.com/"
         ><img
           style="
@@ -86,9 +105,75 @@
         </div>
       </div>
     </header>
+    <!-- end of header-->
+    <img src="public/waves.png" alt="wave" class="wave-seperator" />
+    <!-- car ou sell-->
+    <section class="carousel-section">
+      <h2 class="carousel-title"><i>Potential</i> Prizes</h2>
+      <div class="carousel-track-container">
+        <div class="carousel-track" id="carousel-track"></div>
+      </div>
+      <script>
+        async function initCarousel() {
+          const [cardHtml, prizes] = await Promise.all([
+            fetch("/public/card.html").then((r) => r.text()),
+            fetch("/public/prizes.json").then((r) => r.json()),
+          ]);
+
+          const track = document.getElementById("carousel-track");
+          const parser = new DOMParser();
+
+          // randomize prize order
+          prizes.sort(() => Math.random() - 0.5);
+
+          // pre-compute random rotation and plushie variant for each card to keep them consistent across loops
+          const rotations = prizes.map(() => Math.random() * 20 - 10);
+          const plushieImgs = prizes.map(() =>
+            Math.random() < 0.5
+              ? "/public/carousel/gopher.png"
+              : "/public/carousel/pinggopher.png",
+          );
+
+          // render twice so the loop is seamless (-50% = back to start)
+          [...prizes, ...prizes].forEach((prize, i) => {
+            const doc = parser.parseFromString(cardHtml, "text/html");
+            const card = doc.querySelector(".carousel-card");
+            card.querySelector(".carousel-card-image").src = prize.image;
+            card.querySelector(".carousel-card-image").alt = prize.name;
+            card.querySelector(".carousel-card-title").textContent = prize.name;
+            card.querySelector(".carousel-card-description").textContent =
+              prize.description;
+            card.querySelector(".carousel-card-tokens").textContent =
+              prize.tokens + " token" + (prize.tokens !== 1 ? "s" : "");
+            track.appendChild(card);
+
+            card.style.transform = `rotate(${rotations[i % prizes.length]}deg)`;
+
+            if (prize.id === "plushie") {
+              const img = card.querySelector(".carousel-card-image");
+              img.src = plushieImgs[i % prizes.length];
+              img.alt = "Go Gopher Plushie";
+            }
+          });
+
+          requestAnimationFrame(() => {
+            const scrollDistance = track.children[prizes.length].offsetLeft;
+            track.style.animation = "none";
+            track.animate(
+              [
+                { transform: "translateX(0)" },
+                { transform: `translateX(-${scrollDistance}px)` },
+              ],
+              { duration: 18000, iterations: Infinity, easing: "linear" },
+            );
+          });
+        }
+
+        initCarousel();
+      </script>
+    </section>
     <!-- FAQ and Requirements section -->
     <!-- shoutout to https://railway.hackclub.com/ for the design inspiration -->
-    <img src="public/waves.png" alt="wave" class="wave-seperator" />
     <section class="faq-section">
       <div class="faq-leftside">
         <h1>Requirements</h1>
@@ -102,7 +187,8 @@
           </li>
           <li>
             Write a proper README.md with instructions on how to build and run
-            your project.<br /> AI will not be allowed for this.
+            your project.<br />
+            AI will not be allowed for this.
           </li>
           <li>AI generation can only be used for up to 30% of your code.</li>
           <li>
@@ -161,13 +247,22 @@
             <p>If you're 13-18 years old, yes!</p>
           </details>
           <details>
+            <summary>What do I need to do?</summary>
+            <p>
+              1. Ship a project written in Go<br />
+              2. Get tokens for hours spent<br />
+              3. Redeem tokens for prizes!
+            </p>
+          </details>
+          <details>
             <summary>How do I ship my project?</summary>
             <!-- if nest isn't back up by the time this ysws is ready to run i'll find alternatives -->
             <p>
               If your project is a website, you can host it on any platform that
               supports Go (try
-              <a href="https://hackclub.app" target="_blank">Hack Club Nest</a
-              >! (if it's back up yet)) as long as it's live and accessible to the public.<br />
+              <a href="https://hackclub.app" target="_blank">Hack Club Nest</a>!
+              (if it's back up yet)) as long as it's live and accessible to the
+              public.<br />
               If your project is not a website, you can upload the binary to
               GitHub Releases (or another platform) and optionally list your
               package on pkg.go.dev.
@@ -200,6 +295,63 @@
         </table>
       </div>
     </section>
+    <!-- end of faq section-->
+    <!--start of guides links-->
+    <section class="guides-section">
+      <div
+        style="
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 5px;
+        "
+      >
+        <h2>Guides</h2>
+        <p style="margin: 0; font-style: italic">(Coming Soon)</p>
+      </div>
+
+      <hr class="guides-hr" />
+      <div class="guides-cards-container">
+        <div class="guide-card">
+          <img
+            src="/public/carousel/gopher.png"
+            alt="Go Gopher"
+            class="guide-card-image"
+          />
+          <h3 class="guide-card-title">Setting up Go</h3>
+          <p class="guide-card-description">Make the Golang Go</p>
+        </div>
+        <img
+          src="/public/godown.png"
+          alt="arrow right"
+          class="guides-next-arrow"
+        />
+        <div class="guide-card">
+          <img
+            src="/public/carousel/gopher.png"
+            alt="Go Gopher"
+            class="guide-card-image"
+          />
+          <h3 class="guide-card-title">Setting up Hackatime</h3>
+          <p class="guide-card-description">This time will be hacked</p>
+        </div>
+        <img
+          src="/public/godown.png"
+          alt="arrow right"
+          class="guides-next-arrow"
+        />
+        <div class="guide-card">
+          <img
+            src="/public/carousel/gopher.png"
+            alt="Go Gopher"
+            class="guide-card-image"
+          />
+          <h3 class="guide-card-title">Shipping Your Project</h3>
+          <p class="guide-card-description">Put your project on a ship</p>
+        </div>
+      </div>
+    </section>
+    <!-- start of footer -->
     <img src="public/flipwaves.png" alt="wave" class="wave-seperator" />
     <!-- boo more .png's to download but css transform rotate(180deg) added a weird white line so -->
     <footer>
