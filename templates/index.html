@@ -351,6 +351,165 @@
         </div>
       </div>
     </section>
+    <!-- gambling (aka just AI idea generator slot machine) -->
+    <section class="gambling-section">
+      <div
+        style="
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 5px;
+        "
+      >
+        <h2>Need project ideas?</h2>
+      </div>
+      <hr class="gambling-hr" />
+      <div class="gambling-cc">
+        <div class="gambling-container">
+          <!-- slot machine brrrrr, spins 3 rows for random items on the json list for each row yadayada then passes to ai and ai makes idea based off that -->
+          <div class="slot-machine">
+            <div
+              class="slot-machine-inner"
+              style="display: flex; flex-direction: row"
+            >
+              <div class="slot" id="slot-1">
+                <div class="slot-content" id="slot-content-1"></div>
+              </div>
+              <div class="slot" id="slot-2">
+                <div class="slot-content" id="slot-content-2"></div>
+              </div>
+              <div class="slot" id="slot-3">
+                <div class="slot-content" id="slot-content-3"></div>
+              </div>
+
+              <script>
+                const slotItems = {
+                  1: [
+                    { name: "Website", emoji: "🌐" },
+                    { name: "TUI", emoji: "🖥️" },
+                    { name: "GUI", emoji: "🖼️" },
+                    { name: "CLI", emoji: "⌨️" },
+                    { name: "API", emoji: "🔌" },
+                    { name: "Bot", emoji: "🤖" },
+                  ],
+                  2: [
+                    { name: "Games", emoji: "🎮" },
+                    { name: "Utilities", emoji: "🧰" },
+                    { name: "Demos", emoji: "🧪" },
+                    { name: "Simulations", emoji: "🧬" },
+                    { name: "Scrapers", emoji: "🕸️" },
+                    { name: "Hardware", emoji: "⚙️" },
+                  ],
+                  3: [
+                    { name: "Learning", emoji: "📚" },
+                    { name: "Fun", emoji: "🎉" },
+                    { name: "Productivity", emoji: "📈" },
+                    { name: "Chaos", emoji: "🌪️" },
+                    { name: "Art", emoji: "🎨" },
+                    { name: "Community", emoji: "🫂" },
+                  ],
+                };
+
+                Object.keys(slotItems).forEach((slotId) => {
+                  const slot = document.getElementById(`slot-${slotId}`);
+                  const randomItem =
+                    slotItems[slotId][
+                      Math.floor(Math.random() * slotItems[slotId].length)
+                    ];
+                  slot.textContent = `${randomItem.emoji}`;
+                });
+
+                let result = [1, 1, 1];
+
+                function spinnnn() {
+                  const chosenItems = Object.keys(slotItems).map((slotId) => {
+                    const items = slotItems[slotId];
+                    const randomIndex = Math.floor(
+                      Math.random() * items.length,
+                    );
+                    result[slotId - 1] = randomIndex;
+                    return items[randomIndex];
+                  });
+
+                  const spinDuration = 2000; // total spin time
+                  const spinDelay = 400; // delay between each slot stopping
+                  const startTime = performance.now();
+
+                  // Fetch AI idea while animation plays
+                  const aiPromise = fetch("/generatemeaidea", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      type: chosenItems[0].name,
+                      category: chosenItems[1].name,
+                      theme: chosenItems[2].name,
+                    }),
+                  })
+                    .then((r) => r.text())
+                    .then((data) => data) // response is raw text
+                    .catch(
+                      () => "An error occurred while generating your idea.",
+                    );
+
+                  // cycles emojis and stops each slot in sequence
+                  function animate() {
+                    const elapsed = performance.now() - startTime;
+
+                    Object.keys(slotItems).forEach((slotId) => {
+                      const slot = document.getElementById(`slot-${slotId}`);
+                      const items = slotItems[slotId];
+                      const stopTime = spinDuration + spinDelay * (slotId - 1);
+
+                      if (elapsed < stopTime) {
+                        // Keep spinning by cycling through all items
+                        const cycleSpeed = Math.min(100 - slotId * 25, 50); // faster as slots stop
+                        const currentIndex = Math.floor(
+                          (elapsed / cycleSpeed) % items.length,
+                        );
+                        slot.textContent = `${items[currentIndex].emoji}`;
+                      } else {
+                        // Slot stopped - show final result
+                        const finalIndex = result[slotId - 1];
+                        slot.textContent = `${items[finalIndex].emoji}`;
+                      }
+                    });
+
+                    // Continue animation until all slots stop
+                    const totalAnimationTime =
+                      spinDuration + spinDelay * Object.keys(slotItems).length;
+                    if (elapsed < totalAnimationTime) {
+                      requestAnimationFrame(animate);
+                    } else {
+                      // wait for AI response then show alert
+                      aiPromise.then((aiResponse) => {
+                        // throw text into box thing
+                        document.getElementById("ai-gen").textContent = aiResponse;
+                      });
+                    }
+                  }
+
+                  requestAnimationFrame(animate);
+                }
+
+                window.addEventListener("DOMContentLoaded", () => {
+                  document
+                    .getElementById("spin-button")
+                    .addEventListener("click", spinnnn);
+                });
+              </script>
+            </div>
+            <button
+              id="spin-button"
+              class="spin-button"
+              style="width: 100%; margin: 25px 0px; padding: 10px"
+            >
+              Spin
+            </button>
+          </div>
+        </div>
+        <div class="gambling-ai-gen" id="ai-gen"></div>
+      </div>
+    </section>
     <!-- start of footer -->
     <img src="public/flipwaves.png" alt="wave" class="wave-seperator" />
     <!-- boo more .png's to download but css transform rotate(180deg) added a weird white line so -->

@@ -102,6 +102,7 @@ func main() {
 	// specific handlers
 	http.HandleFunc("/auth/callback", handlers.AuthCallbackHandler)
 	http.HandleFunc("/stats", handlers.StatsHandler)
+	http.HandleFunc("/generatemeaidea", handlers.GenerateMeAIdeaHandler)
 
 	// catch-all
 	http.HandleFunc("/", dynamicHandler)

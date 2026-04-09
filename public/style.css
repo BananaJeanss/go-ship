@@ -378,7 +378,8 @@ details ul li a:hover {
   border: 3px solid var(--accent-color);
   color: black;
 
-  h3, p {
+  h3,
+  p {
     margin: 0;
   }
   p {
@@ -540,6 +541,99 @@ footer {
   font-size: clamp(0.75rem, 1.5vw, 1rem);
 }
 
+/* gambling */
+.gambling-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 40px 0;
+  background-color: var(--background-color);
+}
+
+.gambling-section h2 {
+  font-size: 2.5rem;
+  font-style: italic;
+  margin: 0;
+  text-align: center;
+}
+
+.gambling-hr {
+  border: none;
+  border-top: 4px dotted var(--main-color);
+  width: 75%;
+  margin: 0;
+}
+
+.gambling-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.gambling-cc {
+  display: flex;
+  flex-direction: row;
+  gap: 40px;
+}
+
+.gambling-ai-gen {
+  width: 500px;
+  background-color: var(--main-color);
+  border: 4px solid var(--accent-color);
+  border-radius: 20px;
+  display: flex;
+  align-self: stretch;
+  justify-content: center;
+  align-items: center;
+  color: var(--background-color);
+  font-family: "Bagel Fat One", cursive;
+  font-size: large;
+}
+
+.slot-machine {
+  background-color: var(--main-color);
+  border: 4px solid var(--accent-color);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 8px 0 var(--accent-color);
+  display: inline-block;
+  padding-bottom: 0;
+}
+
+.slot-machine-inner {
+  background-color: #fff;
+  border: 4px solid var(--accent-color);
+  border-radius: 10px;
+  height: 200px;
+}
+
+.spin-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 18px;
+  font-family: "Bagel Fat One", cursive;
+  background-color: var(--backup-color);
+  color: var(--background-color);
+  border: var(--accent-color) 4px solid;
+  cursor: pointer;
+}
+
+/* divider between slots cause */
+
+.slot + .slot {
+  border-left: 4px solid var(--accent-color);
+}
+
+.slot {
+  font-size: 4rem;
+  width: 100px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 /* i hate responsive design why cant i just use react and tailwind waa waa waa */
 
 @media (max-width: 768px) {
@@ -593,5 +687,10 @@ footer {
 
   .guides-cards-container {
     flex-direction: column;
+  }
+
+  /* gambling section */
+  .slot-machine-inner {
+    flex-direction: column !important;
   }
 }
