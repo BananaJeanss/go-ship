@@ -307,14 +307,13 @@
         "
       >
         <h2>Guides</h2>
-        <p style="margin: 0; font-style: italic">(Coming Soon)</p>
       </div>
 
       <hr class="guides-hr" />
       <div class="guides-cards-container">
-        <div class="guide-card">
+        <div class="guide-card" onclick="window.location.href='/guides?gosetup.md'" style="cursor: pointer;">
           <img
-            src="/public/carousel/gopher.png"
+            src="/public/go.svg"
             alt="Go Gopher"
             class="guide-card-image"
           />
@@ -326,7 +325,7 @@
           alt="arrow right"
           class="guides-next-arrow"
         />
-        <div class="guide-card">
+        <div class="guide-card" onclick="window.location.href='/guides?hackatime.md'" style="cursor: pointer;">
           <img
             src="/public/hackatime.png"
             alt="Hack a time waow"
@@ -340,14 +339,14 @@
           alt="arrow right"
           class="guides-next-arrow"
         />
-        <div class="guide-card">
+        <div class="guide-card" onclick="window.location.href='/guides?yourfirstgo.md'" style="cursor: pointer;">
           <img
             src="/public/carousel/gopher.png"
             alt="Go Gopher"
             class="guide-card-image"
           />
-          <h3 class="guide-card-title">Shipping Your Project</h3>
-          <p class="guide-card-description">Put your project on a ship</p>
+          <h3 class="guide-card-title">Hello World!</h3>
+          <p class="guide-card-description">Run your first Go program</p>
         </div>
       </div>
     </section>
