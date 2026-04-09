@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
+	"net"
 	"net/http"
 	"os"
+	"strings"
 	"sync"
 	"time"
 
@@ -22,17 +24,39 @@ func getVisitor(ip string) *rate.Limiter {
 
 	limiter, exists := visitors[ip]
 	if !exists {
-		limiter = rate.NewLimiter(rate.Every(time.Hour/5), 5)
+		limiter = rate.NewLimiter(rate.Every(time.Hour/10), 5) // 10 requests per hour
 		visitors[ip] = limiter
 	}
 
 	return limiter
 }
 
-func addVisitor(ip string) {
-	mu.Lock()
-	defer mu.Unlock()
-	visitors[ip] = rate.NewLimiter(rate.Every(time.Hour/5), 5)
+func getClientIP(r *http.Request) string {
+	for _, header := range []string{"X-Forwarded-For", "CF-Connecting-IP", "X-Real-IP"} {
+		value := strings.TrimSpace(r.Header.Get(header))
+		if value == "" {
+			continue
+		}
+
+		if header == "X-Forwarded-For" {
+			parts := strings.Split(value, ",")
+			if len(parts) > 0 {
+				first := strings.TrimSpace(parts[0])
+				if first != "" {
+					return first
+				}
+			}
+		}
+
+		return value
+	}
+
+	host, _, err := net.SplitHostPort(r.RemoteAddr)
+	if err == nil && host != "" {
+		return host
+	}
+
+	return r.RemoteAddr
 }
 
 var allowedStuff = map[int][]map[string]string{
@@ -114,29 +138,17 @@ func GenerateMeAIdeaHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	prompt := `Generate a interesting and unique 100% Golang project idea for beginner programmers with this theme (randomly selected):\n\n
-              Type: ` + reqData.Slot1 + 
-			  `\nCategory: ` + reqData.Slot2 + 
-			  `\nTheme: ` + reqData.Slot3 + 
-			  `\n\nMake sure the idea is not too common, and is something that can be built in a few days to a week. Also make sure to include some fun details to make the idea more interesting.
+              Type: ` + reqData.Slot1 +
+		`\nCategory: ` + reqData.Slot2 +
+		`\nTheme: ` + reqData.Slot3 +
+		`\n\nMake sure the idea is not too common, and is something that can be built in a few days to a week. Also make sure to include some fun details to make the idea more interesting.
 			  Keep it under 500 characters, make sure to include which packages should be used, don't use any formatting.`
 
-
-	// first off, ratelimit of 5 reqs per hour per ip
-	// if there's a header e.g. Xforwarded or cloudflare or whatever use that instead
-	HeadersToCheck := []string{"X-Forwarded-For", "CF-Connecting-IP", "X-Real-IP"}
-	var ip string
-	for _, header := range HeadersToCheck {
-		if r.Header.Get(header) != "" {
-			ip = r.Header.Get(header)
-			break
-		}
-	}
-	if ip == "" {
-		ip = r.RemoteAddr
-	}
+	// first off, ratelimit of whatever reqs per hour per ip
+	ip := getClientIP(r)
 	limiter := getVisitor(ip)
 	if !limiter.Allow() {
-		http.Error(w, "Too many requests", http.StatusTooManyRequests)
+		http.Error(w, "429 Too many requests", http.StatusTooManyRequests)
 		return
 	}
 
@@ -194,9 +206,7 @@ func GenerateMeAIdeaHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// everything passed, add to ratelimit and send response
-	addVisitor(ip)
-
+	// everything passed, send response
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte(aiResp.Choices[0].Message.Content))

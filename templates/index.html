@@ -457,6 +457,10 @@
                     .then((data) => data) // response is raw text
                     .catch((err) => {
                       console.error("Failed to generate AI idea:", err);
+                      // check if err = ratelimit
+                      if (err.message.includes("429")) {
+                        return "You are generating ideas too quickly. Please try again later.";
+                      }
                       return "An error occurred while generating your idea.";
                     });
 
