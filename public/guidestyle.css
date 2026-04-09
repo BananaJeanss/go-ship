@@ -1,0 +1,110 @@
+@import url("https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap");
+
+:root {
+  --main-color: #65a9d7; /* Go logo blue */
+  --background-color: #f2fdff;
+  --accent-color: #1b2a41;
+  --text-color: #0c1821;
+  --backup-color: #427cfa;
+  --code-bg: #e8f4f8;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: "Lexend Deca", sans-serif;
+  line-height: 1.6;
+  margin: 0 auto;
+  max-width: 800px;
+  padding: 2rem;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--accent-color);
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+h1 {
+  border-bottom: 3px solid var(--main-color);
+  padding-bottom: 0.5rem;
+}
+
+a {
+  color: var(--backup-color);
+  text-decoration: underline var(--backup-color);
+  transition: all 0.2s ease;
+}
+
+a:hover {
+  text-decoration-color: var(--main-color);
+  text-decoration: wavy underline var(--main-color);
+}
+
+code {
+  background-color: var(--code-bg);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: monospace;
+}
+
+pre {
+  background-color: var(--code-bg);
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  border-left: 4px solid var(--main-color);
+}
+
+pre code {
+  background-color: transparent;
+  padding: 0;
+}
+
+blockquote {
+  border-left: 4px solid var(--main-color);
+  margin: 1.5rem 0;
+  padding: 0.5rem 1rem;
+  background-color: rgba(101, 169, 215, 0.1);
+  font-style: italic;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  display: block;
+  margin: 1rem auto;
+}
+
+hr {
+  border: 0;
+  border-top: 2px solid var(--main-color);
+  margin: 3rem 0;
+  opacity: 0.3;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+}
+
+th, td {
+  text-align: left;
+  padding: 0.75rem;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+th {
+  background-color: rgba(101, 169, 215, 0.1);
+  color: var(--accent-color);
+}
+
+ul, ol {
+  padding-left: 1.5rem;
+}
+
+li {
+  margin-bottom: 0.5rem;
+}

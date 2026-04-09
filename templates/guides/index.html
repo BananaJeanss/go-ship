@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Go Ship! - {{ .Title }}</title>
+    <link rel="stylesheet" href="/public/guidestyle.css" />
+  </head>
+  <body>
+    <!-- guide page using md and whatever -->
+    <!-- no mdx unfortunately-->
+    <!-- navbar -->
+    <div style="width: 100%">
+      <img
+        src="/public/GoShip.png"
+        alt="Go Ship! Logo"
+        style="height: 50px; margin: 10px; cursor: pointer"
+        onclick="window.location.href = '/'"
+      />
+    </div>
+    <!-- the actual md content -->
+    <div>{{ .Content }}</div>
+  </body>
+</html>

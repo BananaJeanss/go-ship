@@ -103,6 +103,7 @@ func main() {
 	http.HandleFunc("/auth/callback", handlers.AuthCallbackHandler)
 	http.HandleFunc("/stats", handlers.StatsHandler)
 	http.HandleFunc("/generatemeaidea", handlers.GenerateMeAIdeaHandler)
+	http.HandleFunc("/guides", handlers.GuidesHandler)
 
 	// catch-all
 	http.HandleFunc("/", dynamicHandler)
