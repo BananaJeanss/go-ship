@@ -35,18 +35,91 @@ func addVisitor(ip string) {
 	visitors[ip] = rate.NewLimiter(rate.Every(time.Hour/5), 5)
 }
 
+var allowedStuff = map[int][]map[string]string{
+	1: {
+		{"name": "Website", "emoji": "🌐"},
+		{"name": "TUI", "emoji": "🖥️"},
+		{"name": "GUI", "emoji": "🖼️"},
+		{"name": "CLI", "emoji": "⌨️"},
+		{"name": "API", "emoji": "🔌"},
+		{"name": "Bot", "emoji": "🤖"},
+	},
+	2: {
+		{"name": "Games", "emoji": "🎮"},
+		{"name": "Utilities", "emoji": "🧰"},
+		{"name": "Demos", "emoji": "🧪"},
+		{"name": "Simulations", "emoji": "🧬"},
+		{"name": "Scrapers", "emoji": "🕸️"},
+		{"name": "Hardware", "emoji": "⚙️"},
+	},
+	3: {
+		{"name": "Learning", "emoji": "📚"},
+		{"name": "Fun", "emoji": "🎉"},
+		{"name": "Productivity", "emoji": "📈"},
+		{"name": "Chaos", "emoji": "🌪️"},
+		{"name": "Art", "emoji": "🎨"},
+		{"name": "Community", "emoji": "🫂"},
+	},
+}
+
 // shoutout ai.hackclub.com
 func GenerateMeAIdeaHandler(w http.ResponseWriter, r *http.Request) {
+	// if GET, return the slot options, else if POST, generate an idea
+	if r.Method == http.MethodGet {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(allowedStuff)
+		return
+	}
+
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
 	AI_BASE_URL := "https://ai.hackclub.com/proxy/v1/chat/completions"
 	AI_API_TOKEN := os.Getenv("AI_API_TOKEN")
-	AI_MODEL := "qwen/qwen3-32b"
+	AI_MODEL := "google/gemini-3-flash-preview"
 
 	if AI_BASE_URL == "" || AI_API_TOKEN == "" {
 		http.Error(w, "AI API not configured", 500)
 		return
 	}
 
-	prompt := "hai"
+	// make sure the request follows the format of {slot1: string, slot2: string, slot3: string}, and those contain allowed options
+	var reqData struct {
+		Slot1 string `json:"type"`
+		Slot2 string `json:"category"`
+		Slot3 string `json:"theme"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&reqData); err != nil {
+		http.Error(w, "Invalid request body", 400)
+		return
+	}
+
+	// validate
+	validateSlot := func(slot string, options []map[string]string) bool {
+		for _, option := range options {
+			if slot == option["name"] {
+				return true
+			}
+		}
+		return false
+	}
+
+	if !validateSlot(reqData.Slot1, allowedStuff[1]) || !validateSlot(reqData.Slot2, allowedStuff[2]) || !validateSlot(reqData.Slot3, allowedStuff[3]) {
+		http.Error(w, "Invalid slot values", 400)
+		return
+	}
+
+	prompt := `Generate a interesting and unique 100% Golang project idea for beginner programmers with this theme (randomly selected):\n\n
+              Type: ` + reqData.Slot1 + 
+			  `\nCategory: ` + reqData.Slot2 + 
+			  `\nTheme: ` + reqData.Slot3 + 
+			  `\n\nMake sure the idea is not too common, and is something that can be built in a few days to a week. Also make sure to include some fun details to make the idea more interesting.
+			  Keep it under 500 characters, make sure to include which packages should be used, don't use any formatting.`
+
 
 	// first off, ratelimit of 5 reqs per hour per ip
 	// if there's a header e.g. Xforwarded or cloudflare or whatever use that instead

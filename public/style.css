@@ -586,8 +586,10 @@ footer {
   align-self: stretch;
   justify-content: center;
   align-items: center;
-  color: var(--background-color);
-  font-family: "Bagel Fat One", cursive;
+  color: black;
+  font-family: "Lexend Deca", sans-serif;
+  padding: 20px;
+  overflow-y: auto;
   font-size: large;
 }
 

@@ -383,45 +383,46 @@
               </div>
 
               <script>
-                const slotItems = {
-                  1: [
-                    { name: "Website", emoji: "🌐" },
-                    { name: "TUI", emoji: "🖥️" },
-                    { name: "GUI", emoji: "🖼️" },
-                    { name: "CLI", emoji: "⌨️" },
-                    { name: "API", emoji: "🔌" },
-                    { name: "Bot", emoji: "🤖" },
-                  ],
-                  2: [
-                    { name: "Games", emoji: "🎮" },
-                    { name: "Utilities", emoji: "🧰" },
-                    { name: "Demos", emoji: "🧪" },
-                    { name: "Simulations", emoji: "🧬" },
-                    { name: "Scrapers", emoji: "🕸️" },
-                    { name: "Hardware", emoji: "⚙️" },
-                  ],
-                  3: [
-                    { name: "Learning", emoji: "📚" },
-                    { name: "Fun", emoji: "🎉" },
-                    { name: "Productivity", emoji: "📈" },
-                    { name: "Chaos", emoji: "🌪️" },
-                    { name: "Art", emoji: "🎨" },
-                    { name: "Community", emoji: "🫂" },
-                  ],
-                };
+                let slotItems = {};
 
-                Object.keys(slotItems).forEach((slotId) => {
-                  const slot = document.getElementById(`slot-${slotId}`);
-                  const randomItem =
-                    slotItems[slotId][
-                      Math.floor(Math.random() * slotItems[slotId].length)
-                    ];
-                  slot.textContent = `${randomItem.emoji}`;
-                });
+                async function loadSlotItems() {
+                  try {
+                    const res = await fetch("/generatemeaidea", {
+                      method: "GET",
+                    });
+                    if (!res.ok) {
+                      throw new Error(`HTTP ${res.status}`);
+                    }
+                    slotItems = await res.json();
+                  } catch (err) {
+                    console.error("Failed to load slot items:", err);
+                    alert(
+                      "Failed to load idea generator data. Please try again later.",
+                    );
+                    slotItems = {
+                      1: [{ name: "Error", emoji: "❌" }],
+                      2: [{ name: "Error", emoji: "❌" }],
+                      3: [{ name: "Error", emoji: "❌" }],
+                    };
+                  }
+
+                  Object.keys(slotItems).forEach((slotId) => {
+                    const slot = document.getElementById(`slot-${slotId}`);
+                    const randomItem =
+                      slotItems[slotId][
+                        Math.floor(Math.random() * slotItems[slotId].length)
+                      ];
+                    slot.textContent = `${randomItem.emoji}`;
+                  });
+                }
 
                 let result = [1, 1, 1];
 
                 function spinnnn() {
+                  if (!slotItems || Object.keys(slotItems).length === 0) {
+                    return;
+                  }
+
                   const chosenItems = Object.keys(slotItems).map((slotId) => {
                     const items = slotItems[slotId];
                     const randomIndex = Math.floor(
@@ -435,6 +436,10 @@
                   const spinDelay = 400; // delay between each slot stopping
                   const startTime = performance.now();
 
+                  document.getElementById("spin-button").disabled = true; // disable button during spin and AI fetch
+                  document.getElementById("ai-gen").textContent =
+                    "Generating...";
+
                   // Fetch AI idea while animation plays
                   const aiPromise = fetch("/generatemeaidea", {
                     method: "POST",
@@ -445,11 +450,15 @@
                       theme: chosenItems[2].name,
                     }),
                   })
-                    .then((r) => r.text())
+                    .then((r) => {
+                      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+                      return r.text();
+                    })
                     .then((data) => data) // response is raw text
-                    .catch(
-                      () => "An error occurred while generating your idea.",
-                    );
+                    .catch((err) => {
+                      console.error("Failed to generate AI idea:", err);
+                      return "An error occurred while generating your idea.";
+                    });
 
                   // cycles emojis and stops each slot in sequence
                   function animate() {
@@ -483,7 +492,9 @@
                       // wait for AI response then show alert
                       aiPromise.then((aiResponse) => {
                         // throw text into box thing
-                        document.getElementById("ai-gen").textContent = aiResponse;
+                        document.getElementById("ai-gen").textContent =
+                          aiResponse;
+                        document.getElementById("spin-button").disabled = false;
                       });
                     }
                   }
@@ -491,7 +502,8 @@
                   requestAnimationFrame(animate);
                 }
 
-                window.addEventListener("DOMContentLoaded", () => {
+                window.addEventListener("DOMContentLoaded", async () => {
+                  await loadSlotItems();
                   document
                     .getElementById("spin-button")
                     .addEventListener("click", spinnnn);
