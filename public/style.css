@@ -692,7 +692,26 @@ footer {
   }
 
   /* gambling section */
-  .slot-machine-inner {
+
+  .gambling-cc {
     flex-direction: column !important;
+    align-items: center;
+    justify-content: center;
+  }
+
+
+  .slot-machine {
+    width: 75vw;
+  }
+
+  .gambling-ai-gen {
+    width: 75vw;
+    margin: 0 auto;
+    height: 300px;
+    justify-content: flex-start;
+    align-items: flex-start;
+    text-align: left;
+    padding-top: 16px;
+    overflow: auto;
   }
 }
