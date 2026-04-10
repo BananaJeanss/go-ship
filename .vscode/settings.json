@@ -1,0 +1,5 @@
+{
+  "gopls": {
+    "build.directoryFilters": ["-public/scripts"]
+  }
+}

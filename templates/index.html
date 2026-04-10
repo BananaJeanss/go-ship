@@ -570,11 +570,30 @@
           }
         </style>
 
-        <div style="display: flex; gap: 10px; margin-left: 10px">
-          <button id="run-playground-btn" class="playgrnd-btn">Run</button>
-          <button id="format-playground-btn" class="playgrnd-btn">
-            Format
-          </button>
+        <div
+          style="
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 15px;
+          "
+        >
+          <div style="display: flex; gap: 10px; margin-left: 10px">
+            <button id="run-playground-btn" class="playgrnd-btn">Run</button>
+            <button id="format-playground-btn" class="playgrnd-btn">
+              Format
+            </button>
+          </div>
+          <div style="flex: 1"></div>
+          <select
+            id="example-code-select"
+            style="
+              border-radius: 5px;
+              border: 1px solid var(--accent-color);
+              background: transparent;
+              color: var(--text-primary);
+            "
+          ></select>
         </div>
 
         <textarea id="go-playground-editor"></textarea>
@@ -609,17 +628,55 @@
             },
           );
 
-          // Set the default code snippet here instead of hardcoding in HTML to avoid formatter bugs!
-          goEditor.setValue(`package main
+          // fetch available scripts
+          (async () => {
+            let availableScripts = await fetch("/scripts")
+              .then((r) => {
+                if (!r.ok) throw new Error(`HTTP ${r.status}`);
+                return r.json();
+              })
+              .catch((err) => {
+                console.error("Failed to load scripts:", err);
+                return {};
+              });
 
-import (
-    "fmt"
-    "time"
-)
+            // default to HelloTime.go, else any other script, else empty
+            let defaultContent = "";
+            if (availableScripts["HelloTime.go"]) {
+              defaultContent = decodeURIComponent(
+                availableScripts["HelloTime.go"].replace(/\+/g, "%20"),
+              );
+            } else {
+              const keys = Object.keys(availableScripts);
+              if (keys.length > 0) {
+                defaultContent = decodeURIComponent(
+                  availableScripts[keys[0]].replace(/\+/g, "%20"),
+                );
+              }
+            }
 
-func main() {
-    fmt.Println("Hello, World!", time.Now())
-}\n`);
+            // init the example code select dropdown
+            const select = document.getElementById("example-code-select");
+            Object.keys(availableScripts).forEach((scriptName) => {
+              const option = document.createElement("option");
+              option.value = scriptName;
+              option.textContent = scriptName;
+              select.appendChild(option);
+            });
+            select.addEventListener("change", (e) => {
+              const selectedScript = e.target.value;
+              if (availableScripts[selectedScript]) {
+                const content = decodeURIComponent(
+                  availableScripts[selectedScript].replace(/\+/g, "%20"),
+                );
+                goEditor.setValue(content);
+              }
+            });
+            select.value = defaultContent ? "HelloTime.go" : ""; // set to HelloTime.go if it exists, else blank
+
+            // Set the default code snippet here instead of hardcoding in HTML to avoid formatter bugs!
+            goEditor.setValue(defaultContent);
+          })();
 
           // this could use DRY by putting the formatter in a function but whatever laaaaaame
           // Run handler
@@ -693,6 +750,21 @@ func main() {
 
               // Events contains an array of output events
               if (data.Events && data.Events.length > 0) {
+                // if there's base64 encoded images in the output, display that instead of text
+                const imgEvents = data.Events.filter((e) =>
+                  e.Message.startsWith("IMAGE:"),
+                );
+                if (imgEvents.length > 0) {
+                  const img = document.createElement("img");
+                  img.src = imgEvents[0].Message.replace(
+                    "IMAGE:",
+                    "data:image/png;base64,",
+                  ).trim();
+                  outputEl.innerHTML = "";
+                  outputEl.appendChild(img);
+                  return;
+                }
+
                 outputEl.textContent = data.Events.map((e) => e.Message)
                   .join("")
                   .trim();

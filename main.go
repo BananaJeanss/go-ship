@@ -106,6 +106,7 @@ func main() {
 	http.HandleFunc("/guides", handlers.GuidesHandler)
 	http.HandleFunc("/format", handlers.FormatHandler)
 	http.HandleFunc("/run", handlers.RunHandler)
+	http.HandleFunc("/scripts", handlers.ScriptsHandler)
 
 	// catch-all
 	http.HandleFunc("/", dynamicHandler)
