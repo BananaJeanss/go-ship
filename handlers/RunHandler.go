@@ -6,10 +6,19 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
 
 func RunHandler(w http.ResponseWriter, r *http.Request) {
 	// just sends run request to playground with compliance
+
+	// 1 run per 2 seconds
+	ip := getIP(r)
+	if !checkRateLimit(ip, clientLastRun, 2*time.Second) {
+		w.Header().Set("Content-Type", "application/json")
+		w.Write([]byte(`{"Errors": "Rate limit exceeded. Please wait 2 seconds before running again."}`))
+		return
+	}
 
 	// only allow POST
 	if r.Method != http.MethodPost {

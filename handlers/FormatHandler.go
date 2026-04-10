@@ -6,10 +6,19 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
 
 func FormatHandler(w http.ResponseWriter, r *http.Request) {
 	// just sends request to playground with compliance
+
+	// 1 format per 1 second
+	ip := getIP(r)
+	if !checkRateLimit(ip, clientLastFormat, 1*time.Second) {
+		w.Header().Set("Content-Type", "application/json")
+		w.Write([]byte(`{"Error": "Rate limit exceeded. Please wait 1 second before formatting again."}`))
+		return
+	}
 
 	// only allow POST
 	if r.Method != http.MethodPost {
