@@ -1,3 +1,4 @@
+//go:build ignore
 // copied from go.dev/play/ examples
 
 package main
