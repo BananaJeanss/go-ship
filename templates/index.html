@@ -25,13 +25,14 @@
       <script>
         // if scroll 10px> hide the arrow, else show it
         const arrow = document.getElementById("scrolly-down-arrow-thing");
-        window.addEventListener("scroll", () => {
+        const scrollHandler = () => {
           if (window.scrollY > 50) {
             arrow.style.opacity = "0";
-            window.removeEventListener("scroll", arguments.callee);
+            window.removeEventListener("scroll", scrollHandler);
             // cause 1-shot
           }
-        });
+        };
+        window.addEventListener("scroll", scrollHandler);
       </script>
       <a href="https://hackclub.com/"
         ><img
@@ -311,12 +312,12 @@
 
       <hr class="guides-hr" />
       <div class="guides-cards-container">
-        <div class="guide-card" onclick="window.location.href='/guides?gosetup.md'" style="cursor: pointer;">
-          <img
-            src="/public/go.svg"
-            alt="Go Gopher"
-            class="guide-card-image"
-          />
+        <div
+          class="guide-card"
+          onclick="window.location.href = '/guides?gosetup.md'"
+          style="cursor: pointer"
+        >
+          <img src="/public/go.svg" alt="Go Gopher" class="guide-card-image" />
           <h3 class="guide-card-title">Setting up Go</h3>
           <p class="guide-card-description">Make the Golang Go</p>
         </div>
@@ -325,7 +326,11 @@
           alt="arrow right"
           class="guides-next-arrow"
         />
-        <div class="guide-card" onclick="window.location.href='/guides?hackatime.md'" style="cursor: pointer;">
+        <div
+          class="guide-card"
+          onclick="window.location.href = '/guides?hackatime.md'"
+          style="cursor: pointer"
+        >
           <img
             src="/public/hackatime.png"
             alt="Hack a time waow"
@@ -339,7 +344,11 @@
           alt="arrow right"
           class="guides-next-arrow"
         />
-        <div class="guide-card" onclick="window.location.href='/guides?yourfirstgo.md'" style="cursor: pointer;">
+        <div
+          class="guide-card"
+          onclick="window.location.href = '/guides?yourfirstgo.md'"
+          style="cursor: pointer"
+        >
           <img
             src="/public/carousel/gopher.png"
             alt="Go Gopher"
@@ -525,6 +534,243 @@
         <div class="gambling-ai-gen" id="ai-gen"></div>
       </div>
     </section>
+    <!-- start of playground -->
+    <section
+      class="playground-section"
+      style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 4rem 0;
+      "
+    >
+      <h2 class="playground-title">Try Go!</h2>
+      <hr class="gambling-hr" style="margin-bottom: 25px" />
+
+      <div style="width: 80%; max-width: 800px; text-align: left">
+        <!-- CodeMirror CSS & Theme -->
+        <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css"
+        />
+        <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css"
+        />
+        <!-- CodeMirror JS & Go Mode -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/go/go.min.js"></script>
+
+        <style>
+          .CodeMirror {
+            height: 300px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 15px;
+          }
+        </style>
+
+        <div style="display: flex; gap: 10px; margin-left: 10px">
+          <button id="run-playground-btn" class="playgrnd-btn">Run</button>
+          <button id="format-playground-btn" class="playgrnd-btn">
+            Format
+          </button>
+        </div>
+
+        <textarea id="go-playground-editor"></textarea>
+
+        <!-- Output container -->
+        <pre
+          id="playground-output"
+          style="
+            margin-top: 15px;
+            padding: 15px;
+            background: var(--accent-color);
+            color: #fff;
+            border-radius: 8px;
+            min-height: 50px;
+            display: none;
+            font-family: monospace;
+            white-space: pre-wrap;
+          "
+        ></pre>
+
+        <script>
+          // Initialize CodeMirror on the textarea
+          var goEditor = CodeMirror.fromTextArea(
+            document.getElementById("go-playground-editor"),
+            {
+              mode: "text/x-go",
+              theme: "dracula",
+              lineNumbers: true,
+              indentUnit: 4,
+              tabSize: 4,
+              indentWithTabs: true,
+            },
+          );
+
+          // Set the default code snippet here instead of hardcoding in HTML to avoid formatter bugs!
+          goEditor.setValue(`package main
+
+import (
+    "fmt"
+    "time"
+)
+
+func main() {
+    fmt.Println("Hello, World!", time.Now())
+}\n`);
+
+          // this could use DRY by putting the formatter in a function but whatever laaaaaame
+          // Run handler
+          document
+            .getElementById("run-playground-btn")
+            .addEventListener("click", async () => {
+              const code = goEditor.getValue();
+              const outputEl = document.getElementById("playground-output");
+              document.getElementById("playground-error").style.display =
+                "none";
+
+              outputEl.style.display = "block";
+              outputEl.textContent = "Contacting server...";
+
+              // format, then run
+              const formatres = await fetch("/format", {
+                method: "POST",
+                headers: { "Content-Type": "text/plain" },
+                body: code,
+              });
+
+              if (!formatres.ok) {
+                document.getElementById("playground-error").style.display =
+                  "block";
+                document.getElementById("playground-error").textContent =
+                  "Failed to format code before running. Please try again later.";
+                outputEl.style.display = "none";
+                return;
+              }
+
+              const formatdata = await formatres.json();
+              if (formatdata.Error) {
+                document.getElementById("playground-error").style.display =
+                  "block";
+                document.getElementById("playground-error").textContent =
+                  `Failed to format code before running: ${formatdata.Error}`;
+                outputEl.style.display = "none";
+                return;
+              }
+
+              const formattedCode = formatdata.Body;
+              if (formattedCode !== code) {
+                goEditor.setValue(formattedCode);
+              }
+
+              const res = await fetch("/run", {
+                method: "POST",
+                headers: { "Content-Type": "text/plain" },
+                body: formattedCode,
+              });
+
+              if (!res.ok) {
+                document.getElementById("playground-error").style.display =
+                  "block";
+                document.getElementById("playground-error").textContent =
+                  "Failed to run code. Please try again later.";
+                outputEl.style.display = "none";
+                return;
+              }
+
+              const data = await res.json();
+
+              if (data.Errors) {
+                document.getElementById("playground-error").style.display =
+                  "block";
+                document.getElementById("playground-error").textContent =
+                  `Build Error:\n${data.Errors}`;
+                outputEl.style.display = "none";
+                return;
+              }
+
+              // Events contains an array of output events
+              if (data.Events && data.Events.length > 0) {
+                outputEl.textContent = data.Events.map((e) => e.Message)
+                  .join("")
+                  .trim();
+              } else {
+                outputEl.textContent =
+                  "Program ran successfully, but produced no console output.";
+              }
+            });
+
+          // format handler
+          document
+            .getElementById("format-playground-btn")
+            .addEventListener("click", async () => {
+              const code = goEditor.getValue();
+              document.getElementById("playground-error").style.display =
+                "none";
+              document.getElementById("playground-output").style.display =
+                "none";
+
+              try {
+                const res = await fetch("/format", {
+                  method: "POST",
+                  headers: { "Content-Type": "text/plain" },
+                  body: code,
+                });
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                // make sure new body isnt empty (which means error)
+                if (!data.Body) {
+                  // check if error message exists
+                  if (data.Error) {
+                    document.getElementById("playground-error").style.display =
+                      "block";
+                    document.getElementById("playground-error").textContent =
+                      `Formatting failed: ${data.Error}`;
+                  } else {
+                    alert("Formatting failed for an unknown reason.");
+                  }
+                } else {
+                  goEditor.setValue(data.Body);
+                }
+              } catch (err) {
+                console.error("Formatting failed:", err);
+                alert("Failed to format code. Please try again later.");
+              }
+            });
+        </script>
+        <!-- error area -->
+        <div
+          id="playground-error"
+          style="
+            margin-top: 15px;
+            padding: 15px;
+            background: #ff4d4f;
+            color: #fff;
+            border-radius: 8px;
+            display: none;
+            font-family: monospace;
+            white-space: pre-wrap;
+          "
+        ></div>
+        <a
+          href="https://go.dev/play"
+          style="
+            margin-top: 10px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-family: &quot;Lexend Deca&quot;, sans-serif;
+            text-decoration: none;
+          "
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          https://go.dev/play
+        </a>
+      </div>
+    </section>
+    <!-- end of playground -->
     <!-- start of footer -->
     <img src="public/flipwaves.png" alt="wave" class="wave-seperator" />
     <!-- boo more .png's to download but css transform rotate(180deg) added a weird white line so -->
