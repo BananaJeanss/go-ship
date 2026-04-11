@@ -36,7 +36,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := PageData{
-		HCAAuthURL: "https://auth.hackclub.com/oauth/authorize?client_id=" + clientId + "&redirect_uri=" + redirectURI + "&response_type=code&scope=openid+profile+email+name+profile+slack_id+verification_status&prompt=consent",
+		HCAAuthURL: "https://auth.hackclub.com/oauth/authorize?client_id=" + clientId + "&redirect_uri=" + redirectURI + "&response_type=code&scope=openid+profile+email+name+profile+slack_id+verification_status",
 		IsAuthed:   loggedIn,
 		RSVPCount: rsvpCount,
 		CommitHash: func() string {
