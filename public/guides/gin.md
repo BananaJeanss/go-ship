@@ -14,8 +14,12 @@ For this guide, we'll be using Gin to build a simple public message board using 
 Assuming you already have Go installed, and are inside a folder, let's initialize a new Go module:
 
 ```bash
-go mod init website.org/yourusername/yourproject
+go mod init website.com/yourusername/yourproject
 ```
+
+Obviously, replace `website.com` with the site where your git repo is hosted (e.g. `codeberg.org`, `github.com`), and `yourusername/yourproject` with your username and project name. This is important for importing packages later on.
+
+You can also just do `go mod init yourproject`, but using a full module path is a good practice.
 
 Next, let's install Gin:
 
