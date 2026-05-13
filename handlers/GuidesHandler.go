@@ -9,6 +9,7 @@ import (
 	"text/template"
 
 	"github.com/yuin/goldmark"
+	"github.com/yuin/goldmark/renderer/html"
 )
 
 func GuidesHandler(w http.ResponseWriter, r *http.Request) {
@@ -52,7 +53,12 @@ func GuidesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var buf bytes.Buffer
-	if err := goldmark.Convert(mdContent, &buf); err != nil {
+	md := goldmark.New(
+		goldmark.WithRendererOptions(
+			html.WithUnsafe(),
+		),
+	)
+	if err := md.Convert(mdContent, &buf); err != nil {
 		http.Error(w, "Failed to render guide", http.StatusInternalServerError)
 		return
 	}
