@@ -83,13 +83,30 @@
                   </span>
                 </div>
                 <hr class="hrseperator" />
-                {{if not .IsAuthed}}
-                <a href="{{ .HCAAuthURL }}">
-                  <button class="regbutton rsvp-button">RSVP Now!</button>
-                </a>
-                {{else}}
-                <p class="tyforrsvp">Thanks for RSVPing!</p>
-                {{end}}
+                <div
+                  style="
+                    display: flex;
+                    flex-direction: row;
+                    gap: 8px;
+                    justify-content: center;
+                    align-items: center;
+                  "
+                >
+                  {{if .IsAuthed}}
+                  <a href="{{ .HCAAuthURL }}">
+                    <button class="regbutton rsvp-button">RSVP Now!</button>
+                  </a>
+                  {{else}}
+                  <p class="tyforrsvp">Thanks for RSVPing!</p>
+                  {{end}}
+                  <a
+                    href="https://hackclub.enterprise.slack.com/archives/C0AMCKRCAP9"
+                  >
+                    <button class="regbutton blugreenreyellow">
+                      Join the Slack Channel
+                    </button>
+                  </a>
+                </div>
                 <div
                   style="
                     width: 100%;
@@ -357,24 +374,20 @@
           <h3 class="guide-card-title">Hello World!</h3>
           <p class="guide-card-description">Run your first Go program</p>
         </div>
-        <img
-          src="/public/godown.png"
-          alt="arrow right"
-          class="guides-next-arrow"
-        />
-        <div
-          class="guide-card"
-          onclick="window.location.href = '/guides?gin.md'"
-          style="cursor: pointer"
-        >
-          <img
-            src="/public/color.png"
-            alt="Go Gopher"
-            class="guide-card-image"
-          />
-          <h3 class="guide-card-title">Gin Gonic</h3>
-          <p class="guide-card-description">Build a web server with the Gin framework</p>
-        </div>
+      </div>
+      <hr class="guides-hr" />
+      <div style="display: flex; flex-direction: row; align-items: center; gap: 8px;">
+      <div
+        class="guide-card"
+        onclick="window.location.href = '/guides?gin.md'"
+        style="cursor: pointer"
+      >
+        <img src="/public/color.png" alt="Go Gopher" class="guide-card-image" />
+        <h3 class="guide-card-title">Gin Gonic</h3>
+        <p class="guide-card-description">
+          Build a web server with the Gin framework
+        </p>
+      </div>
       </div>
     </section>
     <!-- gambling (aka just AI idea generator slot machine) -->
@@ -887,6 +900,8 @@
           {{ .CommitHash }}
         </a>
       </p>
+      <div class="verticalseperatorthingy"></div>
+      <p>{{ .RSVPCount }} RSVPs</p>
       <div class="verticalseperatorthingy"></div>
       <p
         style="

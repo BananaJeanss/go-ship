@@ -122,6 +122,12 @@ a:hover {
   top: 32%;
 }
 
+@media (max-width: 768px) {
+  .hero-taglines-parent {
+    transform: scale(0.75);
+  }
+}
+
 .hero-taglines-parent-parent {
   position: relative;
   z-index: 1;
@@ -244,6 +250,14 @@ button {
   border: 4px solid white;
 }
 
+.blugreenreyellow {
+  background: linear-gradient(
+    -67deg,
+    rgb(209, 100, 32) 0%,
+    #ecb22e 55%
+  ) !important;
+}
+
 .regbutton:hover {
   background-position: 100% 50%;
 }
@@ -253,7 +267,7 @@ button {
 }
 
 .tyforrsvp {
-  font-size: xx-large;
+  font-size: large;
   color: var(--background-color);
   margin: 0;
   filter: drop-shadow(1px 1px 0px var(--main-color));
