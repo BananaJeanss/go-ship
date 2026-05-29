@@ -14,7 +14,7 @@ import (
 
 var api *slack.Client
 
-func EventsEndpoint() {
+func EventsEndpoint() error {
 	signingSecret := os.Getenv("SLACK_SIGNING_SECRET")
 	http.HandleFunc("/events-endpoint", func(w http.ResponseWriter, r *http.Request) {
 		body, err := io.ReadAll(r.Body)
@@ -93,6 +93,7 @@ func EventsEndpoint() {
 			}
 		}
 	})
+	return nil
 }
 
 func Init() {
@@ -111,6 +112,11 @@ func Init() {
 	}
 	if err != nil {
 		panic(fmt.Sprintf("Failed to authenticate with Slack API after 3 attempts: %v", err))
+	}
+
+	err = EventsEndpoint()
+	if err != nil {
+		panic(fmt.Sprintf("Failed to set up Slack events endpoint: %v", err))
 	}
 }
 
