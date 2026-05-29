@@ -112,6 +112,7 @@ func main() {
 	http.HandleFunc("/run", handlers.RunHandler)
 	http.HandleFunc("/scripts", handlers.ScriptsHandler)
 	http.HandleFunc("/joinchannel", handlers.PostAddToChannelHandler)
+	http.HandleFunc("/events-endpoint", slack.EventsEndpoint)
 
 	// catch-all
 	http.HandleFunc("/", dynamicHandler)

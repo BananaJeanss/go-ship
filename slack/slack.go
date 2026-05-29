@@ -14,86 +14,83 @@ import (
 
 var api *slack.Client
 
-func EventsEndpoint() error {
+func EventsEndpoint(w http.ResponseWriter, r *http.Request) {
 	signingSecret := os.Getenv("SLACK_SIGNING_SECRET")
-	http.HandleFunc("/events-endpoint", func(w http.ResponseWriter, r *http.Request) {
-		body, err := io.ReadAll(r.Body)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-		sv, err := slack.NewSecretsVerifier(r.Header, signingSecret)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-		if _, err := sv.Write(body); err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		if err := sv.Ensure(); err != nil {
-			w.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-		eventsAPIEvent, err := slackevents.ParseEvent(json.RawMessage(body), slackevents.OptionNoVerifyToken())
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	sv, err := slack.NewSecretsVerifier(r.Header, signingSecret)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	if _, err := sv.Write(body); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if err := sv.Ensure(); err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+	eventsAPIEvent, err := slackevents.ParseEvent(json.RawMessage(body), slackevents.OptionNoVerifyToken())
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
-		fmt.Println("[INFO] Received event:", eventsAPIEvent.Type)
-		switch eventsAPIEvent.Type {
-		case slackevents.URLVerification:
-			var r *slackevents.ChallengeResponse
-			err := json.Unmarshal([]byte(body), &r)
-			if err != nil {
-				w.WriteHeader(http.StatusInternalServerError)
+	fmt.Println("[INFO] Received event:", eventsAPIEvent.Type)
+	switch eventsAPIEvent.Type {
+	case slackevents.URLVerification:
+		var r *slackevents.ChallengeResponse
+		err := json.Unmarshal([]byte(body), &r)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "text")
+		w.Write([]byte(r.Challenge))
+	case slackevents.CallbackEvent:
+		innerEvent := eventsAPIEvent.InnerEvent
+		fmt.Println("[INFO] Received inner event:", innerEvent.Type)
+		// THROW EVENTS HERE U CANT MISS THIS COMMENT
+		switch ev := innerEvent.Data.(type) {
+		case *slackevents.MemberJoinedChannelEvent:
+			if ev.Channel != os.Getenv("SLACK_CHANNEL_ID") {
 				return
 			}
-			w.Header().Set("Content-Type", "text")
-			w.Write([]byte(r.Challenge))
-		case slackevents.CallbackEvent:
-			innerEvent := eventsAPIEvent.InnerEvent
-			fmt.Println("[INFO] Received inner event:", innerEvent.Type)
-			// THROW EVENTS HERE U CANT MISS THIS COMMENT
-			switch ev := innerEvent.Data.(type) {
-			case *slackevents.MemberJoinedChannelEvent:
-				if ev.Channel != os.Getenv("SLACK_CHANNEL_ID") {
-					return
-				}
 
-				// Fetch user info to check if they are a bot
-				user, err := api.GetUserInfo(ev.User)
-				if err != nil {
-					fmt.Printf("Error fetching user info: %v\n", err)
-					return
-				}
+			// Fetch user info to check if they are a bot
+			user, err := api.GetUserInfo(ev.User)
+			if err != nil {
+				fmt.Printf("Error fetching user info: %v\n", err)
+				return
+			}
 
-				// Don't send welcome message to bots
-				if user.IsBot {
-					return
-				}
+			// Don't send welcome message to bots
+			if user.IsBot {
+				return
+			}
 
-				// send welcome message
-				_, _, err = api.PostMessage(
-					ev.Channel,
-					slack.MsgOptionText(fmt.Sprintf("Welcome <@%s>! :party-gopher:", ev.User), false),
-				)
-				if err != nil {
-					fmt.Printf("Error sending welcome message: %v\n", err)
-				}
-			case slackevents.AppMentionEvent:
-				_, _, err = api.PostMessage(
-					ev.Channel,
-					slack.MsgOptionText(":super-party-gopher:", false),
-				)
-				if err != nil {
-					fmt.Printf("Error sending mention response: %v\n", err)
-				}
+			// send welcome message
+			_, _, err = api.PostMessage(
+				ev.Channel,
+				slack.MsgOptionText(fmt.Sprintf("Welcome <@%s>! :party-gopher:", ev.User), false),
+			)
+			if err != nil {
+				fmt.Printf("Error sending welcome message: %v\n", err)
+			}
+		case slackevents.AppMentionEvent:
+			_, _, err = api.PostMessage(
+				ev.Channel,
+				slack.MsgOptionText(":super-party-gopher:", false),
+			)
+			if err != nil {
+				fmt.Printf("Error sending mention response: %v\n", err)
 			}
 		}
-	})
-	return nil
+	}
 }
 
 func Init() {
@@ -112,11 +109,6 @@ func Init() {
 	}
 	if err != nil {
 		panic(fmt.Sprintf("Failed to authenticate with Slack API after 3 attempts: %v", err))
-	}
-
-	err = EventsEndpoint()
-	if err != nil {
-		panic(fmt.Sprintf("Failed to set up Slack events endpoint: %v", err))
 	}
 }
 
