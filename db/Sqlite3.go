@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"time"
+
 	_ "modernc.org/sqlite"
 )
 
@@ -87,18 +88,18 @@ func NewSession(sub string) (string, error) {
 
 	return sessionToken, nil
 }
-	
+
 func IsLoggedIn(Cookie string) bool {
-    var exists bool
-    err := DB.QueryRow(`
+	var exists bool
+	err := DB.QueryRow(`
         SELECT EXISTS(
             SELECT 1 FROM sessions 
             WHERE session_token = ? 
             AND expires_at > datetime('now')
         )
     `, Cookie).Scan(&exists)
-    
-    return err == nil && exists
+
+	return err == nil && exists
 }
 
 var cachedRsvpCount = -1
@@ -118,4 +119,26 @@ func RsvpCount() (int, error) {
 		lastRsvpCountTime = time.Now()
 	}
 	return count, err
+}
+
+func GetUserInfoBySessionToken(sessionToken string) (map[string]any, error) {
+	var userInfo = make(map[string]any)
+	var sub, name, email, slackID string
+	var yswsEligible bool
+	err := DB.QueryRow(`
+		SELECT users.sub, users.name, users.email, users.slack_id, users.ysws_eligible
+		FROM users
+		JOIN sessions ON users.id = sessions.user_id
+		WHERE sessions.session_token = ? AND sessions.expires_at > datetime('now')
+	`, sessionToken).Scan(&sub, &name, &email, &slackID, &yswsEligible)
+	if err != nil {
+		return userInfo, err
+	}
+
+	userInfo["sub"] = sub
+	userInfo["name"] = name
+	userInfo["email"] = email
+	userInfo["slack_id"] = slackID
+	userInfo["ysws_eligible"] = yswsEligible
+	return userInfo, err
 }

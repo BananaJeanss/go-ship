@@ -4,6 +4,7 @@ import (
 	"bananajeanss/go-ship/StartTime"
 	"bananajeanss/go-ship/db"
 	"bananajeanss/go-ship/handlers"
+	"bananajeanss/go-ship/slack"
 	"fmt"
 	"html/template"
 	"net/http"
@@ -71,6 +72,9 @@ func init() {
 		Port = "3000"
 	}
 
+	// slack bot
+	slack.Init()
+
 	// handle ctrl+c gracefully to not get an error
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
@@ -107,6 +111,7 @@ func main() {
 	http.HandleFunc("/format", handlers.FormatHandler)
 	http.HandleFunc("/run", handlers.RunHandler)
 	http.HandleFunc("/scripts", handlers.ScriptsHandler)
+	http.HandleFunc("/joinchannel", handlers.PostAddToChannelHandler)
 
 	// catch-all
 	http.HandleFunc("/", dynamicHandler)

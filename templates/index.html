@@ -101,11 +101,47 @@
                   {{end}}
                   <a
                     href="https://hackclub.enterprise.slack.com/archives/C0AMCKRCAP9"
+                    id="join-anchor"
                   >
-                    <button class="regbutton blugreenreyellow">
+                    <button class="regbutton blugreenreyellow" id="join-button">
                       Join the Slack Channel
                     </button>
                   </a>
+                  {{if .IsAuthed}}
+                  <script>
+                    const joinButton = document.getElementById("join-button");
+                    const joinAnchor = document.getElementById("join-anchor");
+                    
+                    // post to /joinchannel instead of link
+                    joinAnchor
+                      .addEventListener("click", async (e) => {
+                        e.preventDefault();
+                        joinAnchor.style.pointerEvents = "none"; // prevent multiple clicks
+                        joinButton.classList.add("disabled");
+                        const res = await fetch("/joinchannel", {
+                          method: "POST",
+                        });
+                        if (res.ok) {
+                          joinAnchor.style.pointerEvents = "auto"; // re-enable clicks
+                          alert(
+                            "Added to channel!"
+                          )
+                        } else {
+                          if (res.status === 418) {
+                            alert(
+                              "You're already in the channel!"
+                            );
+                          } else {
+                            alert(
+                              "Failed to add to channel. Please try again later.",
+                            );
+                          }
+                          joinButton.classList.remove("disabled");
+                          joinAnchor.style.pointerEvents = "auto"; // re-enable clicks
+                        }
+                      });
+                  </script>
+                  {{end}}
                 </div>
                 <div
                   style="
