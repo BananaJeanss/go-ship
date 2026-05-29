@@ -82,9 +82,16 @@ func EventsEndpoint(w http.ResponseWriter, r *http.Request) {
 				fmt.Printf("Error sending welcome message: %v\n", err)
 			}
 		case *slackevents.AppMentionEvent:
+			opts := []slack.MsgOption{
+				slack.MsgOptionText(":super-party-gopher:", false),
+			}
+			if ev.ThreadTimeStamp != "" {
+				opts = append(opts, slack.MsgOptionTS(ev.ThreadTimeStamp))
+			}
+
 			_, _, err = api.PostMessage(
 				ev.Channel,
-				slack.MsgOptionText(":super-party-gopher:", false),
+				opts...,
 			)
 			if err != nil {
 				fmt.Printf("Error sending mention response: %v\n", err)
