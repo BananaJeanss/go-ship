@@ -93,11 +93,11 @@
                   "
                 >
                   {{if .IsAuthed}}
+                  <p class="tyforrsvp">Thanks for RSVPing!</p>
+                  {{else}}
                   <a href="{{ .HCAAuthURL }}">
                     <button class="regbutton rsvp-button">RSVP Now!</button>
                   </a>
-                  {{else}}
-                  <p class="tyforrsvp">Thanks for RSVPing!</p>
                   {{end}}
                   <a
                     href="https://hackclub.enterprise.slack.com/archives/C0AMCKRCAP9"
@@ -399,7 +399,7 @@
             Build a web server with the Gin framework
           </p>
         </div>
-                <div
+        <div
           class="guide-card"
           onclick="window.location.href = '/guides?taskfile.md'"
           style="cursor: pointer"
