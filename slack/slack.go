@@ -81,7 +81,7 @@ func EventsEndpoint(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				fmt.Printf("Error sending welcome message: %v\n", err)
 			}
-		case slackevents.AppMentionEvent:
+		case *slackevents.AppMentionEvent:
 			_, _, err = api.PostMessage(
 				ev.Channel,
 				slack.MsgOptionText(":super-party-gopher:", false),
@@ -89,6 +89,8 @@ func EventsEndpoint(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				fmt.Printf("Error sending mention response: %v\n", err)
 			}
+		default:
+			fmt.Printf("[INFO] Unhandled inner event type: %T\n", ev)
 		}
 	}
 }
