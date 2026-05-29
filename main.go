@@ -72,9 +72,6 @@ func init() {
 		Port = "3000"
 	}
 
-	// slack bot
-	slack.Init()
-
 	// handle ctrl+c gracefully to not get an error
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
@@ -91,6 +88,9 @@ func main() {
 		fmt.Printf("Failed to initialize database: %v\n", err)
 		return
 	}
+
+	// init slack bot
+	slack.Init()
 
 	// serve public static files
 	http.Handle("/public/", http.StripPrefix("/public/", http.FileServer(http.Dir("./public"))))
@@ -118,7 +118,7 @@ func main() {
 
 	// listen and serve
 	fmt.Printf("Listening & Serving on http://localhost:%s\n", Port)
-	if err := http.ListenAndServe(":" + Port, nil); err != nil {
+	if err := http.ListenAndServe(":"+Port, nil); err != nil {
 		fmt.Printf("Server failed: %v\n", err)
 	}
 }
