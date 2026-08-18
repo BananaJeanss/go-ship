@@ -63,7 +63,7 @@
                       class="lucide-react-icon"
                     />
                     <p class="hero-tagline-text sick-ass-drop-shadow-solid">
-                      Ship a Golang project
+                      Ship a Go project
                     </p>
                   </span>
                   <img
@@ -78,70 +78,9 @@
                       class="lucide-react-icon"
                     />
                     <p class="hero-tagline-text sick-ass-drop-shadow-solid">
-                      Get cool prizes!
+                      Get a Gopher plushie!
                     </p>
                   </span>
-                </div>
-                <hr class="hrseperator" />
-                <div
-                  style="
-                    display: flex;
-                    flex-direction: row;
-                    gap: 8px;
-                    justify-content: center;
-                    align-items: center;
-                  "
-                >
-                  {{if .IsAuthed}}
-                  <p class="tyforrsvp">Thanks for RSVPing!</p>
-                  {{else}}
-                  <a href="{{ .HCAAuthURL }}">
-                    <button class="regbutton rsvp-button">RSVP Now!</button>
-                  </a>
-                  {{end}}
-                  <a
-                    href="https://hackclub.enterprise.slack.com/archives/C0AMCKRCAP9"
-                    id="join-anchor"
-                  >
-                    <button class="regbutton blugreenreyellow" id="join-button">
-                      Join the Slack Channel
-                    </button>
-                  </a>
-                  {{if .IsAuthed}}
-                  <script>
-                    const joinButton = document.getElementById("join-button");
-                    const joinAnchor = document.getElementById("join-anchor");
-                    
-                    // post to /joinchannel instead of link
-                    joinAnchor
-                      .addEventListener("click", async (e) => {
-                        e.preventDefault();
-                        joinAnchor.style.pointerEvents = "none"; // prevent multiple clicks
-                        joinButton.classList.add("disabled");
-                        const res = await fetch("/joinchannel", {
-                          method: "POST",
-                        });
-                        if (res.ok) {
-                          joinAnchor.style.pointerEvents = "auto"; // re-enable clicks
-                          alert(
-                            "Added to channel!"
-                          )
-                        } else {
-                          if (res.status === 418) {
-                            alert(
-                              "You're already in the channel!"
-                            );
-                          } else {
-                            alert(
-                              "Failed to add to channel. Please try again later.",
-                            );
-                          }
-                          joinButton.classList.remove("disabled");
-                          joinAnchor.style.pointerEvents = "auto"; // re-enable clicks
-                        }
-                      });
-                  </script>
-                  {{end}}
                 </div>
                 <div
                   style="
@@ -154,6 +93,63 @@
                 ></div>
               </div>
             </div>
+            <div
+              style="
+                display: flex;
+                flex-direction: row;
+                gap: 8px;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+              "
+            >
+              {{if .IsAuthed}}
+              <p class="tyforrsvp">Thanks for RSVPing!</p>
+              {{else}}
+              <a href="{{ .HCAAuthURL }}">
+                <button class="regbutton rsvp-button">RSVP Now!</button>
+              </a>
+              {{end}}
+              <a
+                href="https://hackclub.enterprise.slack.com/archives/C0AMCKRCAP9"
+                id="join-anchor"
+              >
+                <button class="regbutton blugreenreyellow" id="join-button">
+                  Join the Slack Channel
+                </button>
+              </a>
+              {{if .IsAuthed}}
+              <script>
+                const joinButton = document.getElementById("join-button");
+                const joinAnchor = document.getElementById("join-anchor");
+
+                // post to /joinchannel instead of link
+                joinAnchor.addEventListener("click", async (e) => {
+                  e.preventDefault();
+                  joinAnchor.style.pointerEvents = "none"; // prevent multiple clicks
+                  joinButton.classList.add("disabled");
+                  const res = await fetch("/joinchannel", {
+                    method: "POST",
+                  });
+                  if (res.ok) {
+                    joinAnchor.style.pointerEvents = "auto"; // re-enable clicks
+                    alert("Added to channel!");
+                  } else {
+                    if (res.status === 418) {
+                      alert("You're already in the channel!");
+                    } else {
+                      alert(
+                        "Failed to add to channel. Please try again later.",
+                      );
+                    }
+                    joinButton.classList.remove("disabled");
+                    joinAnchor.style.pointerEvents = "auto"; // re-enable clicks
+                  }
+                });
+              </script>
+              {{end}}
+            </div>
+
             <!-- buttons nd stuff -->
           </div>
         </div>
@@ -161,71 +157,7 @@
     </header>
     <!-- end of header-->
     <img src="public/waves.png" alt="wave" class="wave-seperator" />
-    <!-- car ou sell-->
-    <section class="carousel-section">
-      <h2 class="carousel-title"><i>Potential</i> Prizes</h2>
-      <div class="carousel-track-container">
-        <div class="carousel-track" id="carousel-track"></div>
-      </div>
-      <script>
-        async function initCarousel() {
-          const [cardHtml, prizes] = await Promise.all([
-            fetch("/public/card.html").then((r) => r.text()),
-            fetch("/public/prizes.json").then((r) => r.json()),
-          ]);
 
-          const track = document.getElementById("carousel-track");
-          const parser = new DOMParser();
-
-          // randomize prize order
-          prizes.sort(() => Math.random() - 0.5);
-
-          // pre-compute random rotation and plushie variant for each card to keep them consistent across loops
-          const rotations = prizes.map(() => Math.random() * 20 - 10);
-          const plushieImgs = prizes.map(() =>
-            Math.random() < 0.5
-              ? "/public/carousel/gopher.png"
-              : "/public/carousel/pinggopher.png",
-          );
-
-          // render twice so the loop is seamless (-50% = back to start)
-          [...prizes, ...prizes].forEach((prize, i) => {
-            const doc = parser.parseFromString(cardHtml, "text/html");
-            const card = doc.querySelector(".carousel-card");
-            card.querySelector(".carousel-card-image").src = prize.image;
-            card.querySelector(".carousel-card-image").alt = prize.name;
-            card.querySelector(".carousel-card-title").textContent = prize.name;
-            card.querySelector(".carousel-card-description").textContent =
-              prize.description;
-            card.querySelector(".carousel-card-tokens").textContent =
-              prize.tokens + " token" + (prize.tokens !== 1 ? "s" : "");
-            track.appendChild(card);
-
-            card.style.transform = `rotate(${rotations[i % prizes.length]}deg)`;
-
-            if (prize.id === "plushie") {
-              const img = card.querySelector(".carousel-card-image");
-              img.src = plushieImgs[i % prizes.length];
-              img.alt = "Go Gopher Plushie";
-            }
-          });
-
-          requestAnimationFrame(() => {
-            const scrollDistance = track.children[prizes.length].offsetLeft;
-            track.style.animation = "none";
-            track.animate(
-              [
-                { transform: "translateX(0)" },
-                { transform: `translateX(-${scrollDistance}px)` },
-              ],
-              { duration: 18000, iterations: Infinity, easing: "linear" },
-            );
-          });
-        }
-
-        initCarousel();
-      </script>
-    </section>
     <!-- FAQ and Requirements section -->
     <!-- shoutout to https://railway.hackclub.com/ for the design inspiration -->
     <section class="faq-section">
@@ -242,9 +174,8 @@
           <li>
             Write a proper README.md with instructions on how to build and run
             your project.<br />
-            AI will not be allowed for this.
           </li>
-          <li>AI generation can only be used for up to 30% of your code.</li>
+          <li>You may not use AI generation to write your code, with the exception of tab completion.</li>
           <li>
             Ship your project!
             <ul>
@@ -303,9 +234,8 @@
           <details>
             <summary>What do I need to do?</summary>
             <p>
-              1. Ship a project written in Go<br />
-              2. Get tokens for hours spent<br />
-              3. Redeem tokens for prizes!
+              1. Ship a project written in Go with at least 5 hours tracked on Hackatime<br />
+              2. We'll ship you a Gopher Plushie!
             </p>
           </details>
           <details>
@@ -314,8 +244,7 @@
             <p>
               If your project is a website, you can host it on any platform that
               supports Go (try
-              <a href="https://hackclub.app" target="_blank">Hack Club Nest</a>!
-              (if it's back up yet)) as long as it's live and accessible to the
+              <a href="https://hackclub.app" target="_blank">Hack Club Nest</a>!) as long as it's live and accessible to the
               public.<br />
               If your project is not a website, you can upload the binary to
               GitHub Releases (or another platform) and optionally list your
@@ -350,6 +279,20 @@
       </div>
     </section>
     <!-- end of faq section-->
+
+    <div
+      style="
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      "
+    >
+      <hr class="guides-hr" />
+      <img src="/public/plushies.png" />
+    </div>
+
     <!--start of guides links-->
     <section class="guides-section">
       <div
@@ -974,7 +917,7 @@
           gap: 5px;
         "
       >
-        Built on <a href="https://go.dev/" target="_blank">Go</a>
+        Built with <a href="https://go.dev/" target="_blank">Go</a>
         <img
           src="/public/gopherdraw.png"
           alt="an masterpiece drawing of the go gopher at like what 42x42 pixels"
