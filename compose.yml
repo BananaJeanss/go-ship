@@ -10,10 +10,23 @@ services:
         COMMIT_HASH: ${COMMIT_HASH:-unknown}
     env_file:
       - .env
+    environment:
+      DB_PATH: /data/goship.db
     volumes:
-      - ./goship.db:/app/goship.db
+      - goship-data:/data
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${PORT:-3000}"]
+      test:
+        [
+          "CMD",
+          "wget",
+          "-q",
+          "-O",
+          "/dev/null",
+          "http://localhost:${PORT:-3000}",
+        ]
       interval: 30s
       timeout: 10s
       retries: 3
+
+volumes:
+  goship-data:

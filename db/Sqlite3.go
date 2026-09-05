@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/hex"
 	"fmt"
+	"os"
 	"time"
 
 	_ "modernc.org/sqlite"
@@ -14,7 +15,13 @@ var DB *sql.DB
 
 func Init() error {
 	var err error
-	DB, err = sql.Open("sqlite", "./goship.db")
+
+	dbPath := "./goship.db"
+	if (os.Getenv("DB_PATH") != "") {
+		dbPath = os.Getenv("DB_PATH")
+	}
+	
+	DB, err = sql.Open("sqlite", dbPath)
 	if err != nil {
 		return err
 	}
