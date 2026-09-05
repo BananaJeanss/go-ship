@@ -1,0 +1,19 @@
+services:
+  go-ship:
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3000}:${PORT:-3000}"
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        COMMIT_HASH: ${COMMIT_HASH:-unknown}
+    env_file:
+      - .env
+    volumes:
+      - ./goship.db:/app/goship.db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${PORT:-3000}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3

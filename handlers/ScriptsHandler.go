@@ -52,7 +52,7 @@ func ScriptsHandler(w http.ResponseWriter, r *http.Request) {
 	buffer.WriteString("{")
 	for i, name := range scriptNames {
 		escapedContent := url.QueryEscape(scriptContents[i])
-		buffer.WriteString(`"` + name + `":"` + escapedContent + `"`)
+		buffer.WriteString(`"`);buffer.WriteString(name);buffer.WriteString(`":"`);buffer.WriteString(escapedContent);buffer.WriteString(`"`)
 		if i < len(scriptNames)-1 {
 			buffer.WriteString(",")
 		}
