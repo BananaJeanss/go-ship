@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"os"
+	"path/filepath"
 	"time"
 
 	_ "modernc.org/sqlite"
@@ -17,10 +18,13 @@ func Init() error {
 	var err error
 
 	dbPath := "./goship.db"
-	if (os.Getenv("DB_PATH") != "") {
+	if os.Getenv("DB_PATH") != "" {
 		dbPath = os.Getenv("DB_PATH")
 	}
-	
+	if err := os.MkdirAll(filepath.Dir(dbPath), 0755); err != nil {
+		return fmt.Errorf("create database directory: %w", err)
+	}
+
 	DB, err = sql.Open("sqlite", dbPath)
 	if err != nil {
 		return err

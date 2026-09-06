@@ -24,6 +24,6 @@ WORKDIR /app
 
 COPY --from=builder /app /app
 
-RUN mkdir -p /app/data
+RUN mkdir -p /data
 
 CMD ["./go-ship"]
